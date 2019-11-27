@@ -70,18 +70,17 @@ public class roadService {
     }
 
     public static Map<String, Object> getRoadByFilter(String type, String value, Boolean ifPrepara, String preparaString) throws IOException {
-        List<String> list = new ArrayList();
         EsUtils esUtils = new EsUtils();
         Map<String, Object> map = new HashMap();
         RestHighLevelClient client = esUtils.getConnection();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        SearchRequest searchRequest = new SearchRequest(Config.CONFERENCEINDEX);
+        SearchRequest searchRequest = new SearchRequest(Config.ROADINDEX);
         if (type.equals("1")){
             boolQueryBuilder.must(QueryBuilders.matchAllQuery());
         }else {
             if (type.equals("0")){
-                boolQueryBuilder.must(QueryBuilders.wildcardQuery("labels","*"+value+"*"));
+                boolQueryBuilder.must(QueryBuilders.matchQuery("roadText",value));
             }else {
                 return null;
             }
@@ -95,13 +94,13 @@ public class roadService {
                 return null;
             }
             for (Object key : map.keySet()){
-                if (key.toString().equals("pubdate")){
+                if (key.toString().equals("accessTime")){
                     if (map.get(key).toString().equals("")){
                         continue;
                     }
                     String[] strings = toStringList(map.get(key).toString());
 //                    System.out.println(strings);
-                    boolQueryBuilder.filter(QueryBuilders.rangeQuery("date").from(strings[0]).to(strings[1]));
+                    boolQueryBuilder.filter(QueryBuilders.rangeQuery("time").from(strings[0]).to(strings[1]));
                 }
             }
         }
