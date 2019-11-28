@@ -10,7 +10,6 @@ public class Config {
     public static final String ROADINDEX = "tdwy_road";
     public static final String CONFERENCEINDEX = "conference";
     public static final String CAR_INDEX = "tdwy_car";
-    public static final String TDWY_INDEX = "tdwy";
     public static final String NIGHT_OUT_INDEX = "tdwy_night_out";
     public static final String CITY_IN_OUT_INDEX = "city_in_out";
     public static final String FOLLOW_INDEX = "tdwy_follow";
