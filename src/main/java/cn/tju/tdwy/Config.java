@@ -1,8 +1,5 @@
 package cn.tju.tdwy;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Config {
 
     /**
