@@ -43,7 +43,7 @@ public class roadService {
             queryBuilder = QueryBuilders.matchAllQuery();
         }
         if (type.equals("0")){
-            queryBuilder = QueryBuilders.matchQuery("roadText",value+"*");
+            queryBuilder = QueryBuilders.matchQuery("roadText",value);
         }
 
         searchSourceBuilderDESC.query(queryBuilder);
