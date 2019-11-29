@@ -3,7 +3,7 @@ package cn.tju.tdwy.controller;
 import cn.tju.tdwy.dao.RoadMapper;
 import cn.tju.tdwy.daomain.RetResponse;
 import cn.tju.tdwy.daomain.RetResult;
-import cn.tju.tdwy.service.data;
+import cn.tju.tdwy.service.DataServer;
 import cn.tju.tdwy.service.roadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Random;
 
 @RestController
 
@@ -31,7 +30,7 @@ public class RoadController {
         Map result = null;
         try {
             if (type.equals("4")){
-                result = data.history();
+                result = DataServer.history();
             }else if (type.equals("3")){
                 result = roadService.getRoadByFilter("1", value, ifPrepara, preparaString, roadMapper, page);
             }else {

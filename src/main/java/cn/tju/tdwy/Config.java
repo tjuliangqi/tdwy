@@ -72,15 +72,15 @@ public class Config {
         carNumColor.put("99","未知");
         carNumColor.put("51","黄绿牌");
         carNumColor.put("52","渐变绿牌");
-        carNumType.put("1","大型汽车");
-        carNumType.put("2","小型汽车");
-        carNumType.put("3","使馆汽车");
-        carNumType.put("4","领馆汽车");
-        carNumType.put("5","境外汽车");
-        carNumType.put("6","外籍汽车");
-        carNumType.put("7","两、三轮摩托车");
-        carNumType.put("8","轻便摩托车");
-        carNumType.put("9","使馆摩托车");
+        carNumType.put("01","大型汽车");
+        carNumType.put("02","小型汽车");
+        carNumType.put("03","使馆汽车");
+        carNumType.put("04","领馆汽车");
+        carNumType.put("05","境外汽车");
+        carNumType.put("06","外籍汽车");
+        carNumType.put("07","两、三轮摩托车");
+        carNumType.put("08","轻便摩托车");
+        carNumType.put("09","使馆摩托车");
         carNumType.put("10","领馆摩托车");
         carNumType.put("11","境外摩托车");
         carNumType.put("12","外籍摩托车");
@@ -97,7 +97,7 @@ public class Config {
         carNumType.put("23","警用汽车");
         carNumType.put("24","警用摩托");
         carNumType.put("99","电动自行车");
-        carNumType.put("0","未知");
+        carNumType.put("00","未知");
         carNumType.put("25","新能源车");
         carNumType.put("-1","未选择");
     }

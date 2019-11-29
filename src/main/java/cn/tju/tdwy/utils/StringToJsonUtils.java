@@ -13,7 +13,7 @@ import java.util.Map;
 public class StringToJsonUtils {
 
     public static void main(String[] args) throws JSONException {
-//        String string = "[{'record_id': '32d749819fcf438bbb40f7a979a9531b', 'accessTime': '2019-07-01T14:50:55.000', 'roadText': '7215海星街与黄海路交口', 'roadNum': '120116001118', 'roadDirectNum': '01', 'dirNum': '0', 'picURL': '/17.56.42.98/data/disk2/NORMAL/120116050001118/2019/07/01/14/20190701145055287_1.jpg'}]";
+//        String string = "[{'record_id': '32d749819fcf438bbb40f7a979a9531b', 'accessTime': '2019-07-01T14:50:55.000', 'roadText': '7215海星街与黄海路交口', 'roadNum': '120116001118', 'roadDirectNum': '01', 'dirNum': '0', 'picURL': '/17.56.42.98/DataServer/disk2/NORMAL/120116050001118/2019/07/01/14/20190701145055287_1.jpg'}]";
 //        String string2 = "{example:{carNumType:['111','222'],carNumColor:['www','eee'],carColor:['zzz','xxx']}}";
 //        JSONArray jsonArray = stringToJson(string);
 //        Map map = strToMap(string2);
