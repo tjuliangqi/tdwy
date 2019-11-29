@@ -11,7 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static cn.tju.tdwy.service.CarService.carPrepara;
@@ -23,14 +25,14 @@ public class CarController {
     @Autowired
     RoadMapper roadMapper;
     @RequestMapping(value = "/textSearchList", method = RequestMethod.POST)
-    public RetResult<Map<String,Object>> textSearchList(@RequestBody Map<String,String> map) throws IOException, JSONException {
+    public RetResult<Object> textSearchList(@RequestBody Map<String,String> map) throws IOException, JSONException {
         //RetResult retResult = new RetResult();
         String type = String.valueOf(map.get("type"));
         String value = String.valueOf(map.get("value"));
         Boolean ifPrepara = Boolean.valueOf(map.get("ifPrepara"));
         String preparaString = String.valueOf(map.get("preparaString"));
 
-        Map<String,Object> affiliationsEsBeans = carSearchList(type, value, ifPrepara, preparaString, roadMapper);
+        Object affiliationsEsBeans = carSearchList(type, value, ifPrepara, preparaString, roadMapper);
         return RetResponse.makeOKRsp(affiliationsEsBeans);
     }
 
@@ -39,9 +41,14 @@ public class CarController {
         //RetResult retResult = new RetResult();
         String type = String.valueOf(map.get("type"));
         String value = String.valueOf(map.get("value"));
-        Map<String, Object> selectTags = carPrepara(type, value);
+        List<String> typeList = Arrays.asList("1", "4", "5");
+        if (typeList.contains(type)){
+            Map<String, Object> selectTags = carPrepara(type, value);
 
-        return RetResponse.makeOKRsp(selectTags);
+            return RetResponse.makeOKRsp(selectTags);
+        } else {
+            return RetResponse.makeErrRsp("筛选接口type只有1、4、5");
+        }
     }
 
     @RequestMapping(value = "/pic", method = RequestMethod.POST)
@@ -49,7 +56,7 @@ public class CarController {
         Map<String,Object> resultMap = new HashMap<>();
         try {
             String fileName = System.currentTimeMillis()+file.getOriginalFilename();
-            String destFileName="C:\\Users\\user\\Desktop\\twelve_upload"+File.separator+fileName;
+            String destFileName="C:\\Users\\user\\Desktop\\tdwy_upload"+File.separator+fileName;
 
             File destFile = new File(destFileName);
             destFile.getParentFile().mkdirs();
