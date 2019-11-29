@@ -71,22 +71,27 @@ public class roadService {
         list.add((String) searchHitsASC[0].getSourceAsMap().get("time"));
         list.add((String) searchHitsDESC[0].getSourceAsMap().get("time"));
         date.put("date", list);
+
         return date;
 
     }
 
-    public static Map<String, Object> getRoadByFilter(String type, String value, Boolean ifPrepara, String preparaString, RoadMapper roadMapper) throws IOException {
+    public static Map<String, Object> getRoadByFilter(String type, String value, Boolean ifPrepara, String preparaString, RoadMapper roadMapper, int page) throws IOException {
         EsUtils esUtils = new EsUtils();
         Map<String, Object> map = new HashMap();
         RestHighLevelClient client = esUtils.getConnection();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        SearchRequest searchRequest = new SearchRequest(Config.ROADINDEX);
+        SearchRequest searchRequest = new SearchRequest(Config.TDWYINDEX);
+        String roadText = null;
+        String roadNum = null;
         if (type.equals("1")){
             boolQueryBuilder.must(QueryBuilders.matchAllQuery());
         }else {
             if (type.equals("0")){
-                boolQueryBuilder.must(QueryBuilders.matchQuery("roadText",value));
+                Map<String,String> stringMap = getRoadText(value);
+                roadNum = stringMap.get("roadNum");
+                boolQueryBuilder.must(QueryBuilders.matchQuery("roadText",stringMap.get("roadText")));
             }else {
                 return null;
             }
@@ -100,18 +105,55 @@ public class roadService {
                 return null;
             }
             for (Object key : map.keySet()){
-                if (key.toString().equals("accessTime")){
+                if (key.toString().equals("time")){
                     if (map.get(key).toString().equals("")){
                         continue;
                     }
                     String[] strings = toStringList(map.get(key).toString());
 //                    System.out.println(strings);
-                    boolQueryBuilder.filter(QueryBuilders.rangeQuery("time").from(strings[0]).to(strings[1]));
+                    boolQueryBuilder.filter(QueryBuilders.rangeQuery("accessTime").from(strings[0]).to(strings[1]));
                 }
-
+                if (key.toString().equals("carType")){
+                    if (map.get(key).toString().equals("")){
+                        continue;
+                    }
+                    String[] strings = toStringList(map.get(key).toString());
+                    for (String str:strings){
+                        boolQueryBuilder.filter(QueryBuilders.wildcardQuery("carTypeText",str+"*"));
+                    }
+                }
+                if (key.toString().equals("carColor")){
+                    if (map.get(key).toString().equals("")){
+                        continue;
+                    }
+                    String[] strings = toStringList(map.get(key).toString());
+                    for (String str:strings){
+                        boolQueryBuilder.filter(QueryBuilders.wildcardQuery("carColorText",str+"*"));
+                    }
+                }
+                if (key.toString().equals("carNumColor")){
+                    if (map.get(key).toString().equals("")){
+                        continue;
+                    }
+                    String[] strings = toStringList(map.get(key).toString());
+                    for (String str:strings){
+                        boolQueryBuilder.filter(QueryBuilders.wildcardQuery("carNumColorText",str+"*"));
+                    }
+                }
+                if (key.toString().equals("carNumType")){
+                    if (map.get(key).toString().equals("")){
+                        continue;
+                    }
+                    String[] strings = toStringList(map.get(key).toString());
+                    for (String str:strings){
+                        boolQueryBuilder.filter(QueryBuilders.wildcardQuery("carNumTypeText",str+"*"));
+                    }
+                }
             }
         }
         searchSourceBuilder.query(boolQueryBuilder);
+        searchSourceBuilder.from(page);
+        searchSourceBuilder.size(20);
         System.out.println(boolQueryBuilder);
         searchRequest.source(searchSourceBuilder);
         SearchResponse searchResponse;
@@ -125,98 +167,48 @@ public class roadService {
         }
         client.close();
         Map finalCarMap = new HashMap();
-        Map finalIdMap = new HashMap();
-        String roadNum = null;
-        String roadText = null;
+
         SearchHit[] searchHits = searchResponse.getHits().getHits();
         for (SearchHit searchHit : searchHits){
             Map hitMap = searchHit.getSourceAsMap();
-
-            String carList = String.valueOf(hitMap.get("carList"));
-            Map carMap = str2map(carList);
-
-            String idList = String.valueOf(hitMap.get("idList"));
-            Map idMap = str2map(idList);
-            for1:
-            for (Object key : idMap.keySet()){
-                if (ifPrepara){
-                    String uuid = (String) idMap.get(key);
-                    carBase carBase = carBaseService.getRoadByFilter("1",uuid);
-                    if (map.get("carNumType")!=null && map.get("carNumType").equals("")){
-                        String[] strings = toStringList(map.get(key).toString());
-                        for (String str:strings){
-                            if (carBase.getCarNumTypeText().equals(str)){
-                                idMap.remove(key);
-                                carMap.remove(key);
-                                continue for1;
-                            }
-                        }
-                    }
-                    if (map.get("carNumColor")!=null && map.get("carNumColor").equals("")){
-                        String[] strings = toStringList(map.get(key).toString());
-                        for (String str:strings){
-                            if (carBase.getCarNumColorText().equals(str)){
-                                idMap.remove(key);
-                                carMap.remove(key);
-                                continue for1;
-                            }
-                        }
-                    }
-                    if (map.get("carColor")!=null && map.get("carColor").equals("")){
-                        String[] strings = toStringList(map.get(key).toString());
-                        for (String str:strings){
-                            if (carBase.getCarColorText().equals(str)){
-                                idMap.remove(key);
-                                carMap.remove(key);
-                                continue for1;
-                            }
-                        }
-                    }
-                    if (map.get("carType")!=null && map.get("carType").equals("")){
-                        String[] strings = toStringList(map.get(key).toString());
-                        for (String str:strings){
-                            if (carBase.getCarTypeText().equals(str)){
-                                idMap.remove(key);
-                                carMap.remove(key);
-                                continue for1;
-                            }
-                        }
-                    }
-                }
-            }
-            finalCarMap.putAll(carMap);
-            finalIdMap.putAll(idMap);
-
+            String carList = String.valueOf(hitMap.get("carNum"));
+            String accessTime = String.valueOf(hitMap.get("accessTime"));
+            finalCarMap.put(accessTime,carList);
             roadNum = String.valueOf(hitMap.get("roadNum"));
-            roadText =  String.valueOf(hitMap.get("roadText"));
         }
         RoadMySQL roadMySQL = roadMapper.getRoadByRoadNum(roadNum);
-        System.out.println(roadNum);
-        System.out.println(roadMySQL);
         Map result = new HashMap();
         result.put("roadText",roadText);
         result.put("carList",finalCarMap);
-        result.put("idList", finalIdMap);
         result.put("lng", roadMySQL.getLng());
         result.put("lat", roadMySQL.getLat());
+        result.put("size", searchResponse.getHits().totalHits);
         return result;
     }
 
-    public static Map<String,Object> str2map(String idList){
-        Map idMapList = new HashMap();
+    public static Map<String,String> getRoadText(String value) throws IOException {
+        EsUtils esUtils = new EsUtils();
+        RestHighLevelClient client = esUtils.getConnection();
+        Map<String, String> date = new HashMap();
+        QueryBuilder queryBuilder = null;
+        SearchSourceBuilder searchSourceBuilderDESC = new SearchSourceBuilder();
+        SearchRequest searchRequestDESC = new SearchRequest(Config.ROADINDEX);
+        queryBuilder = QueryBuilders.matchQuery("roadText",value);
+
+
+        searchSourceBuilderDESC.query(queryBuilder);
+        searchRequestDESC.source(searchSourceBuilderDESC);
+        SearchResponse searchResponseDESC = null;
         try {
-            Map idMap = strToMap(idList);
-            for (Object key : idMap.keySet()){
-                String[] strings = toStringList(idMap.get(key).toString());
-                for (String str:strings){
-                    List<String> list = new ArrayList<>();
-                    list.add(str);
-                    idMapList.put(key,list);
-                }
-            }
-        } catch (JSONException e) {
+            searchResponseDESC = client.search(searchRequestDESC, RequestOptions.DEFAULT);
+        } catch (IOException e) {
             e.printStackTrace();
+            client.close();
         }
-        return idMapList;
+        client.close();
+        SearchHit[] searchHitsDESC = searchResponseDESC.getHits().getHits();
+        date.put("roadText",(String) searchHitsDESC[0].getSourceAsMap().get("roadText"));
+        date.put("roadNum",(String) searchHitsDESC[0].getSourceAsMap().get("roadNum"));
+        return date;
     }
 }
