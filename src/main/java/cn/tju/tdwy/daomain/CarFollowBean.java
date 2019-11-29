@@ -2,21 +2,16 @@ package cn.tju.tdwy.daomain;
 
 import org.json.JSONObject;
 
+import java.util.Map;
+
 public class CarFollowBean {
 
-    private String time;
-    private String carA;
-    private String carB;
-    private JSONObject carAList;
-    private JSONObject carBList;
-    private int count;
-
-    public String getTime() {
-        return time;
+    public String getDay() {
+        return day;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setDay(String day) {
+        this.day = day;
     }
 
     public String getCarA() {
@@ -35,19 +30,83 @@ public class CarFollowBean {
         this.carB = carB;
     }
 
-    public JSONObject getCarAList() {
+    public String getCarANumType() {
+        return carANumType;
+    }
+
+    public void setCarANumType(String carANumType) {
+        this.carANumType = carANumType;
+    }
+
+    public String getCarBNumType() {
+        return carBNumType;
+    }
+
+    public void setCarBNumType(String carBNumType) {
+        this.carBNumType = carBNumType;
+    }
+
+    public String getCarANumColor() {
+        return carANumColor;
+    }
+
+    public void setCarANumColor(String carANumColor) {
+        this.carANumColor = carANumColor;
+    }
+
+    public String getCarBNumColor() {
+        return carBNumColor;
+    }
+
+    public void setCarBNumColor(String carBNumColor) {
+        this.carBNumColor = carBNumColor;
+    }
+
+    public String getCarAColor() {
+        return carAColor;
+    }
+
+    public void setCarAColor(String carAColor) {
+        this.carAColor = carAColor;
+    }
+
+    public String getCarBColor() {
+        return carBColor;
+    }
+
+    public void setCarBColor(String carBColor) {
+        this.carBColor = carBColor;
+    }
+
+    public String getCarAType() {
+        return carAType;
+    }
+
+    public void setCarAType(String carAType) {
+        this.carAType = carAType;
+    }
+
+    public String getCarBType() {
+        return carBType;
+    }
+
+    public void setCarBType(String carBType) {
+        this.carBType = carBType;
+    }
+
+    public Map getCarAList() {
         return carAList;
     }
 
-    public void setCarAList(JSONObject carAList) {
+    public void setCarAList(Map carAList) {
         this.carAList = carAList;
     }
 
-    public JSONObject getCarBList() {
+    public Map getCarBList() {
         return carBList;
     }
 
-    public void setCarBList(JSONObject carBList) {
+    public void setCarBList(Map carBList) {
         this.carBList = carBList;
     }
 
@@ -62,14 +121,37 @@ public class CarFollowBean {
     @Override
     public String toString() {
         return "CarFollowBean{" +
-                "time='" + time + '\'' +
+                "day='" + day + '\'' +
                 ", carA='" + carA + '\'' +
                 ", carB='" + carB + '\'' +
-                ", carAList='" + carAList + '\'' +
-                ", carBList='" + carBList + '\'' +
+                ", carANumType='" + carANumType + '\'' +
+                ", carBNumType='" + carBNumType + '\'' +
+                ", carANumColor='" + carANumColor + '\'' +
+                ", carBNumColor='" + carBNumColor + '\'' +
+                ", carAColor='" + carAColor + '\'' +
+                ", carBColor='" + carBColor + '\'' +
+                ", carAType='" + carAType + '\'' +
+                ", carBType='" + carBType + '\'' +
+                ", carAList=" + carAList +
+                ", carBList=" + carBList +
                 ", count=" + count +
                 '}';
     }
+
+    private String day;
+    private String carA;
+    private String carB;
+    private String carANumType;
+    private String carBNumType;
+    private String carANumColor;
+    private String carBNumColor;
+    private String carAColor;
+    private String carBColor;
+    private String carAType;
+    private String carBType;
+    private Map carAList;
+    private Map carBList;
+    private int count;
 
 
 }

@@ -3,28 +3,21 @@ package cn.tju.tdwy.utils;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.json.JSONException;
 
 import java.util.*;
 
 import static cn.tju.tdwy.utils.JsonToMapUtils.strToMap;
+import static cn.tju.tdwy.utils.NLPUtils.textToMap;
 
 public class ToBuildersUtils {
 
-    public static SearchSourceBuilder queryTextToBuilder (String type, String value, boolean ifPrepara, String preparaString) throws JSONException {
+    public static SearchSourceBuilder queryTextToBuilder (String type, String value, boolean ifPrepara, String preparaString, Map<String,Integer> sizeMap) throws JSONException {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         QueryBuilder builder0;
         QueryBuilder builderAdd;
-        Map<String, Integer> sizeMap = new HashMap<>();
-        sizeMap.put("0",1);
-        sizeMap.put("1",1);
-        sizeMap.put("2",1);
-        sizeMap.put("3",1);
-        sizeMap.put("4",10);
-        sizeMap.put("5",10);
-        sizeMap.put("6",10);
-        sizeMap.put("7",1);
-        sizeMap.put("filter",100);
+
         // {0:车牌检索, 1:推荐, 2:图片检索, 3:自然语言检索, 4:首次入城车辆, 5:昼伏夜出车辆, 6:伴随车辆, 7:碰撞分析}
         if (ifPrepara == false || preparaString.equals("{}")) {
             if (type.equals("0")) {
@@ -43,10 +36,17 @@ public class ToBuildersUtils {
                         .size(sizeMap.get("2"))
                         .query(builder0);
             } else if (type.equals("3")) {
-                System.out.println("！！！！自然语言先用推荐代替");
-                builder0 = QueryBuilders.matchAllQuery();
+                //value = "津JHT808在2019年6月30号4点30分到2019年6月30号4点30分的行车记录";
+                Map map = textToMap(value);
+                System.out.println("自然语言先用模板处理代替");
+                builder0 = QueryBuilders.boolQuery()
+                        .must(QueryBuilders.matchQuery("carNum", map.get("carNum")))
+                        .must(QueryBuilders.rangeQuery("accessTime")
+                                .from(map.get("beginTime"))
+                                .to(map.get("endTime")));
                 searchSourceBuilder.from(0)
                         .size(sizeMap.get("3"))
+                        .sort("accessTime",SortOrder.ASC)
                         .query(builder0);
             } else if (type.equals("4")) {
                 builder0 = QueryBuilders.rangeQuery("countIn")
@@ -67,59 +67,40 @@ public class ToBuildersUtils {
                         .size(sizeMap.get("6"))
                         .query(builder0);
             } else {
-                // value = "['黑RJT353','鲁A75020']";
-                String[] carArray = value.replace("['","").replace("']","").split("','");
+                // value = "['黑RJT353', '鲁A75020']";
+                String[] carArray = value.replace("['","").replace("']","").split("', '");
                 List<String> carList= Arrays.asList(carArray);
                 builder0 = QueryBuilders.boolQuery()
                         .should(QueryBuilders.boolQuery()
                                 .must(QueryBuilders.matchQuery("carA",carList.get(0)))
-                                .must(QueryBuilders.matchQuery("carB",carList.get(-1))))
+                                .must(QueryBuilders.matchQuery("carB",carList.get(1))))
                         .should(QueryBuilders.boolQuery()
-                                .must(QueryBuilders.matchQuery("carA",carList.get(-1)))
+                                .must(QueryBuilders.matchQuery("carA",carList.get(1)))
                                 .must(QueryBuilders.matchQuery("carB",carList.get(0))));
                 searchSourceBuilder.from(0)
                         .size(sizeMap.get("7"))
                         .query(builder0);
             }
-        } else { // 只筛选0~5
-            if (type.equals("0")) {
-                builder0 = QueryBuilders.matchQuery("carNum", value);
-                builderAdd = addFilterBuilder(builder0, preparaString);
-                searchSourceBuilder.from(0)
-                        .size(sizeMap.get("filter"))
-                        .query(builderAdd);
-            } else if (type.equals("1")) {
+        } else { // 只筛选1、4、5
+            if (type.equals("1")) {
                 builder0 = QueryBuilders.matchAllQuery();
                 builderAdd = addFilterBuilder(builder0, preparaString);
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("filter"))
-                        .query(builderAdd);
-            } else if (type.equals("2")) {
-                builder0 = QueryBuilders.matchAllQuery();
-                builderAdd = addFilterBuilder(builder0, preparaString);
-                searchSourceBuilder.from(0)
-                        .size(sizeMap.get("filter"))
-                        .query(builderAdd);
-            } else if (type.equals("3")) {
-                System.out.println("！！！！自然语言先用推荐代替");
-                builder0 = QueryBuilders.matchAllQuery();
-                builderAdd = addFilterBuilder(builder0, preparaString);
-                searchSourceBuilder.from(0)
-                        .size(sizeMap.get("filter"))
+                        .size(sizeMap.get("1"))
                         .query(builderAdd);
             } else if (type.equals("4")) {
                 builder0 = QueryBuilders.rangeQuery("countIn")
                         .from(1);
                 builderAdd = addFilterBuilder(builder0, preparaString);
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("filter"))
+                        .size(sizeMap.get("4"))
                         .query(builderAdd);
             } else {
                 builder0 = QueryBuilders.rangeQuery("nightTimeNum")
                         .from(1);
                 builderAdd = addFilterBuilder(builder0, preparaString);
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("filter"))
+                        .size(sizeMap.get("5"))
                         .query(builderAdd);
             }
         }
@@ -185,9 +166,9 @@ public class ToBuildersUtils {
         }catch (Exception e){
             System.out.println("No filtration carColor");
         }
-        // try filtrate carBrand
+        // try filtrate carType
         try {
-            String carBrand = map.get("carBrand").toString().replace("[\"", "").replace("\"]", "");
+            String carBrand = map.get("carType").toString().replace("[\"", "").replace("\"]", "");
             String[] carBrandList = carBrand.split("\",\"");
             QueryBuilder builder1 = QueryBuilders.matchQuery("carBrand", carBrandList[0]);
             for(int i =1;i<carBrandList.length;i++){
@@ -199,7 +180,7 @@ public class ToBuildersUtils {
                     .must(builder0)
                     .must(builder1);
         }catch (Exception e){
-            System.out.println("No filtration carBrand");
+            System.out.println("No filtration carType");
         }
         return builder0;
     }

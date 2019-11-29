@@ -12,19 +12,12 @@ import java.util.Map;
 
 public class StringToJsonUtils {
 
-    public static void main(String[] args) throws JSONException {
-//        String string = "[{'record_id': '32d749819fcf438bbb40f7a979a9531b', 'accessTime': '2019-07-01T14:50:55.000', 'roadText': '7215海星街与黄海路交口', 'roadNum': '120116001118', 'roadDirectNum': '01', 'dirNum': '0', 'picURL': '/17.56.42.98/DataServer/disk2/NORMAL/120116050001118/2019/07/01/14/20190701145055287_1.jpg'}]";
-//        String string2 = "{example:{carNumType:['111','222'],carNumColor:['www','eee'],carColor:['zzz','xxx']}}";
-//        JSONArray jsonArray = stringToJson(string);
-//        Map map = strToMap(string2);
-//        //carNumType，carNumColor，carColor，carBrand
-//        Object carNumTypeObj =map.get("carNumType");
-//        System.out.println(jsonArray);
-//        System.out.println(carNumTypeObj);
-        String ee = "{'120116001013': '2019-07-03T14:54:35.000'}";
-        System.out.println(stringToJson2(ee));
-
-    }
+    /**
+     *
+     * @param string example:String string = "[{'record_id': '32d749819fcf438bbb40f7a979a9531b', 'accessTime': '2019-07-01T14:50:55.000', 'roadText': '7215海星街与黄海路交口', 'roadNum': '120116001118', 'roadDirectNum': '01', 'dirNum': '0', 'picURL': '/17.56.42.98/data/disk2/NORMAL/120116050001118/2019/07/01/14/20190701145055287_1.jpg'}]";
+     * @param roadMapper
+     * @return
+     */
     public static ArrayList<Map> stringToJson(String string, RoadMapper roadMapper){
         ArrayList<Map> fields_list = new ArrayList<>();
         try {
@@ -35,7 +28,7 @@ public class StringToJsonUtils {
             if(jsonArray.length() > 0){
                 for (int i = 0;i < jsonArray.length();i++) {
                     //获得json数据
-                    Map<String,Object> amap = new HashMap<>();
+                    Map<String,Object> map = new HashMap<>();
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     //根据key建取值
                     String accessTime = jsonObject.getString("accessTime");
@@ -49,14 +42,14 @@ public class StringToJsonUtils {
                     RoadMySQL roadMySQL = roadMapper.getRoadByRoadNum(roadNum);
                     String lng = roadMySQL.getLng();
                     String lat = roadMySQL.getLat();
-                    amap.put("accessTime",accessTime);
-                    amap.put("roadText",roadText);
-                    amap.put("roadDirectNum",roadDirectNum);
-                    amap.put("dirNum",dirNum);
-                    amap.put("lng",lng);
-                    amap.put("lat",lat);
-                    amap.put("picURL",picURL);
-                    fields_list.add(amap);
+                    map.put("accessTime",accessTime);
+                    map.put("roadText",roadText);
+                    map.put("roadDirectNum",roadDirectNum);
+                    map.put("dirNum",dirNum);
+                    map.put("lng",lng);
+                    map.put("lat",lat);
+                    map.put("picURL",picURL);
+                    fields_list.add(map);
                 }
             }
 
@@ -66,8 +59,12 @@ public class StringToJsonUtils {
         return fields_list;
     }
 
+    /**
+     *
+     * @param string example:String string = "{'120116001013': '2019-07-03T14:54:35.000'}";
+     * @return
+     */
     public static JSONObject stringToJson2(String string) {
-
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject = new JSONObject(string);

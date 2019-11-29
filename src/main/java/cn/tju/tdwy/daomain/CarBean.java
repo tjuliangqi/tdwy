@@ -1,7 +1,5 @@
 package cn.tju.tdwy.daomain;
 
-import org.json.JSONArray;
-
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -11,7 +9,7 @@ public class CarBean {
     private String carNumType;
     private String carNumColor;
     private String carColor;
-    private String carBrand;
+    private String carType;
     private ArrayList fields_bind_time;
 
     public String getDay() {
@@ -54,12 +52,12 @@ public class CarBean {
         this.carColor = carColor;
     }
 
-    public String getCarBrand() {
-        return carBrand;
+    public String getCarType() {
+        return carType;
     }
 
-    public void setCarBrand(String carBrand) {
-        this.carBrand = carBrand;
+    public void setCarType(String carType) {
+        this.carType = carType;
     }
 
     public ArrayList getFields_bind_time() {
@@ -78,7 +76,7 @@ public class CarBean {
                 ", carNumType='" + carNumType + '\'' +
                 ", carNumColor='" + carNumColor + '\'' +
                 ", carColor='" + carColor + '\'' +
-                ", carBrand='" + carBrand + '\'' +
+                ", carType='" + carType + '\'' +
                 ", fields_bind_time='" + fields_bind_time + '\'' +
                 '}';
     }
