@@ -71,7 +71,27 @@ public class roadService {
         list.add((String) searchHitsASC[0].getSourceAsMap().get("time"));
         list.add((String) searchHitsDESC[0].getSourceAsMap().get("time"));
         date.put("date", list);
-
+        List<String> carColorList = new ArrayList<>();
+        Config config = new Config();
+        for (Object key : config.carColor.keySet()){
+            carColorList.add(config.carColor.get(key));
+        }
+        date.put("carColor",carColorList);
+        List<String> carTypeList = new ArrayList<>();
+        for (Object key : config.carType.keySet()){
+            carTypeList.add(config.carType.get(key));
+        }
+        date.put("carType",carTypeList);
+        List<String> carNumTypeList = new ArrayList<>();
+        for (Object key : config.carNumType.keySet()){
+            carNumTypeList.add(config.carNumType.get(key));
+        }
+        date.put("carNumType",carNumTypeList);
+        List<String> carNumColorList = new ArrayList<>();
+        for (Object key : config.carNumColor.keySet()){
+            carNumColorList.add(config.carNumColor.get(key));
+        }
+        date.put("carNumColor",carNumColorList);
         return date;
 
     }
@@ -91,7 +111,8 @@ public class roadService {
             if (type.equals("0")){
                 Map<String,String> stringMap = getRoadText(value);
                 roadNum = stringMap.get("roadNum");
-                boolQueryBuilder.must(QueryBuilders.matchQuery("roadText",stringMap.get("roadText")));
+                roadText = stringMap.get("roadText");
+                boolQueryBuilder.must(QueryBuilders.matchQuery("roadText",roadText));
             }else {
                 return null;
             }
