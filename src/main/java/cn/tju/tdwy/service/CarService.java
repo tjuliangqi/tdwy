@@ -40,7 +40,7 @@ public class CarService {
         sizeMap.put("0",1);
         sizeMap.put("1",10);
         sizeMap.put("2",1);
-        sizeMap.put("3",1);
+        sizeMap.put("3",100);
         sizeMap.put("4",10);
         sizeMap.put("5",10);
         sizeMap.put("6",10);
@@ -109,7 +109,7 @@ public class CarService {
                 for (SearchHit searchHit : searchHits) {
                     //System.out.println(searchHit.getSourceAsString());
                     carNum = (String) searchHit.getSourceAsMap().get("carNum");
-                    carNumTypeText = (String) searchHit.getSourceAsMap().get("carNumTypeText");
+                    carNumTypeText = (String) searchHit.getSourceAsMap().get("carNumType");
                     carNumColorText = (String) searchHit.getSourceAsMap().get("carNumColorText");
                     carColorText = (String) searchHit.getSourceAsMap().get("carColorText");
                     carTypeText = (String) searchHit.getSourceAsMap().get("carTypeText");
@@ -134,6 +134,8 @@ public class CarService {
                     amap.put("picURL",picURL);
                     fields_bind_time.add(amap);
                 }
+                Config config = new Config();
+                carNumTypeText = config.carNumType.get(carNumTypeText);
                 carBean.setCarNum(carNum);
                 carBean.setCarNumType(carNumTypeText);
                 carBean.setCarNumColor(carNumColorText);

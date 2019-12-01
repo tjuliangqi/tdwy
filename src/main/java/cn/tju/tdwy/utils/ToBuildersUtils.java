@@ -70,13 +70,21 @@ public class ToBuildersUtils {
                 // value = "['黑RJT353', '鲁A75020']";
                 String[] carArray = value.replace("['","").replace("']","").split("', '");
                 List<String> carList= Arrays.asList(carArray);
+                String carAName = "";
+                String carBName = "";
+                try {
+                    carAName = carList.get(0);
+                    carBName = carList.get(1);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
                 builder0 = QueryBuilders.boolQuery()
                         .should(QueryBuilders.boolQuery()
-                                .must(QueryBuilders.matchQuery("carA",carList.get(0)))
-                                .must(QueryBuilders.matchQuery("carB",carList.get(1))))
+                                .must(QueryBuilders.matchQuery("carA",carAName))
+                                .must(QueryBuilders.matchQuery("carB",carBName)))
                         .should(QueryBuilders.boolQuery()
-                                .must(QueryBuilders.matchQuery("carA",carList.get(1)))
-                                .must(QueryBuilders.matchQuery("carB",carList.get(0))));
+                                .must(QueryBuilders.matchQuery("carA",carBName))
+                                .must(QueryBuilders.matchQuery("carB",carAName)));
                 searchSourceBuilder.from(0)
                         .size(sizeMap.get("7"))
                         .query(builder0);
