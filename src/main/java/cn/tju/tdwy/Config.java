@@ -23,6 +23,7 @@ public class Config {
     public Map<String,String> carColor = new HashMap<>();
     public Map<String,String> carNumColor = new HashMap<>();
     public Map<String,String> carNumType = new HashMap<>();
+    public Map<String,String> ipMap = new HashMap<>();
     public Config(){
         carType.put("0","未知车型");
         carType.put("1","大型客车");
@@ -100,6 +101,21 @@ public class Config {
         carNumType.put("00","未知");
         carNumType.put("25","新能源车");
         carNumType.put("-1","未选择");
+        ipMap.put("17.56.42.96","tdwy/img96");
+        ipMap.put("17.56.42.97","tdwy/img97");
+        ipMap.put("17.56.42.98","tdwy/img98");
+        ipMap.put("17.56.42.99","tdwy/img99");
+        ipMap.put("17.56.42.100","tdwy/img100");
+        ipMap.put("17.56.42.101","tdwy/img101");
+        ipMap.put("17.56.42.102","tdwy/img102");
+        ipMap.put("17.56.42.103","tdwy/img103");
+        ipMap.put("17.56.42.104","tdwy/img104");
+        ipMap.put("17.56.42.105","tdwy/img105");
+        ipMap.put("17.56.42.106","tdwy/img106");
+        ipMap.put("17.56.42.107","tdwy/img107");
+
+
+
     }
 }
 

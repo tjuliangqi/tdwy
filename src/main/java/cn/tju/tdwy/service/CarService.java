@@ -119,7 +119,12 @@ public class CarService {
                     String accessTime = (String) searchHit.getSourceAsMap().get("accessTime");
                     String roadNum = (String) searchHit.getSourceAsMap().get("roadNum");
                     String picURL = (String) searchHit.getSourceAsMap().get("picName1");
-                    picURL = "http://211.81.50.158/img/tdwy_pic/luhu.jpg";
+
+                    picURL = picURL.replace("\\","/").replace("//","/");
+                    String ip = picURL.split("/")[1];
+                    Config config = new Config();
+                    picURL = "http://211.81.50.158"+picURL.replace(ip+"/data",config.ipMap.get(ip));
+                    //picURL = "http://211.81.50.158/img/tdwy_pic/luhu.jpg";
                     RoadMySQL roadMySQL = roadMapper.getRoadByRoadNum(roadNum);
                     String lng = roadMySQL.getLng();
                     String lat = roadMySQL.getLat();

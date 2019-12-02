@@ -1,5 +1,6 @@
 package cn.tju.tdwy.utils;
 
+import cn.tju.tdwy.Config;
 import cn.tju.tdwy.dao.RoadMapper;
 import cn.tju.tdwy.daomain.RoadMySQL;
 import org.json.JSONArray;
@@ -38,7 +39,11 @@ public class StringToJsonUtils {
                     String dirNum = jsonObject.getString("dirNum");
                     String picURL = jsonObject.getString("picURL");
                     //Integer.parseInt
-                    picURL = "http://211.81.50.158/img/tdwy_pic/luhu.jpg";
+                    picURL = picURL.replace("\\","/");
+                    String ip = picURL.split("/")[1];
+                    Config config = new Config();
+                    picURL = "http://211.81.50.158"+picURL.replace(ip+"/data",config.ipMap.get(ip));
+                    //picURL = "http://211.81.50.158/img/tdwy_pic/luhu.jpg";
                     RoadMySQL roadMySQL = roadMapper.getRoadByRoadNum(roadNum);
                     String lng = roadMySQL.getLng();
                     String lat = roadMySQL.getLat();
