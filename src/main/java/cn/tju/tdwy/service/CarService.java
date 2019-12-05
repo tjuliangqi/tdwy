@@ -9,6 +9,8 @@ import cn.tju.tdwy.utils.EsUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
@@ -270,6 +272,36 @@ public class CarService {
             selectTags.put("carType",result4);
         }
         return selectTags;
+    }
+
+
+    public static String picSearch(String picName) throws IOException {
+        EsUtils esUtils = new EsUtils();
+        RestHighLevelClient client = esUtils.client;
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        QueryBuilder builder0 = QueryBuilders.wildcardQuery("picName1", "*"+picName);
+        searchSourceBuilder.from(0)
+                .size(1)
+                .query(builder0);
+
+        SearchRequest searchRequest;
+
+        searchRequest = new SearchRequest(Config.TDWY_INDEX);
+
+        searchRequest.source(searchSourceBuilder);
+        SearchResponse searchResponse = client.search(searchRequest);
+        SearchHit[] searchHits = searchResponse.getHits().getHits();
+        String carNum = "查询不到此图片";
+        if (searchHits.length < 1){
+            System.out.println("查询不到此图片");
+        }else {
+            for (SearchHit searchHit:searchHits){
+                //System.out.println(searchHit.getSourceAsString());
+                carNum = (String)searchHit.getSourceAsMap().get("carNum");
+            }
+
+        }
+        return carNum;
     }
 
 }

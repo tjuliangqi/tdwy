@@ -18,6 +18,7 @@ import java.util.Map;
 
 import static cn.tju.tdwy.service.CarService.carPrepara;
 import static cn.tju.tdwy.service.CarService.carSearchList;
+import static cn.tju.tdwy.service.CarService.picSearch;
 
 @RestController
 @RequestMapping("/transport/car")
@@ -32,8 +33,8 @@ public class CarController {
         Boolean ifPrepara = Boolean.valueOf(map.get("ifPrepara"));
         String preparaString = String.valueOf(map.get("preparaString"));
 
-        Object affiliationsEsBeans = carSearchList(type, value, ifPrepara, preparaString, roadMapper);
-        return RetResponse.makeOKRsp(affiliationsEsBeans);
+        Object carBeans_FollowBeans = carSearchList(type, value, ifPrepara, preparaString, roadMapper);
+        return RetResponse.makeOKRsp(carBeans_FollowBeans);
     }
 
     @RequestMapping(value = "/prepara", method = RequestMethod.POST)
@@ -62,9 +63,12 @@ public class CarController {
             destFile.getParentFile().mkdirs();
             file.transferTo(destFile);
 
-            String hashcodeSearchPic = HashcodeUtils.getPictureHashcode(destFileName);
-            System.out.println(hashcodeSearchPic);
-            resultMap.put("hashcode",hashcodeSearchPic);
+            //String hashcodeSearchPic = HashcodeUtils.getPictureHashcode(destFileName);
+            //System.out.println(hashcodeSearchPic);
+
+            String carNum = picSearch(file.getOriginalFilename());
+            resultMap.put("hashcode",carNum);
+
             return RetResponse.makeOKRsp(resultMap);
         } catch (Exception e){
             return RetResponse.makeErrRsp("获取hashcode出错");

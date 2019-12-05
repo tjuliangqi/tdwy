@@ -31,7 +31,9 @@ public class ToBuildersUtils {
                         .size(sizeMap.get("1"))
                         .query(builder0);
             } else if (type.equals("2")) {
-                builder0 = QueryBuilders.matchQuery("hashcode", value);
+                //builder0 = QueryBuilders.matchQuery("hashcode", value);
+                //用车牌检索
+                builder0 = QueryBuilders.matchQuery("carNum", value);
                 searchSourceBuilder.from(0)
                         .size(sizeMap.get("2"))
                         .query(builder0);
