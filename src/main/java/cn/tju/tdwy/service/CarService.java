@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.*;
 
 import static cn.tju.tdwy.utils.JsonToMapUtils.strToMap;
+import static cn.tju.tdwy.utils.StringToJsonUtils.followAddFields;
+import static cn.tju.tdwy.utils.StringToJsonUtils.sortByAccesstime;
 import static cn.tju.tdwy.utils.StringToJsonUtils.stringToJson;
 import static cn.tju.tdwy.utils.ToBuildersUtils.queryTextToBuilder;
 
@@ -234,8 +236,11 @@ public class CarService {
 
                     // carAList carBList 封装成json返回
                     Map carAJson = strToMap(carAList);
+                    ArrayList carA_fields_bind_time = followAddFields(carA, carAJson, roadMapper);
+                    ArrayList carA_fields_bind_time_sort = sortByAccesstime(carA_fields_bind_time);
                     Map carBJson = strToMap(carBList);
-
+                    ArrayList carB_fields_bind_time = followAddFields(carB, carBJson, roadMapper);
+                    ArrayList carB_fields_bind_time_sort = sortByAccesstime(carB_fields_bind_time);
                     carFollowBean.setDay(day);
                     carFollowBean.setCarA(carA);
                     carFollowBean.setCarB(carB);
@@ -247,8 +252,8 @@ public class CarService {
                     carFollowBean.setCarBColor(carBColor);
                     carFollowBean.setCarAType(carAType);
                     carFollowBean.setCarBType(carBType);
-                    carFollowBean.setCarAList(carAJson);
-                    carFollowBean.setCarBList(carBJson);
+                    carFollowBean.setCarAList(carA_fields_bind_time_sort);
+                    carFollowBean.setCarBList(carB_fields_bind_time_sort);
                     carFollowBean.setCount(count);
                     carFollowBeans.add(carFollowBean);
                 }

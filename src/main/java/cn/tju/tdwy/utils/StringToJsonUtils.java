@@ -3,13 +3,19 @@ package cn.tju.tdwy.utils;
 import cn.tju.tdwy.Config;
 import cn.tju.tdwy.dao.RoadMapper;
 import cn.tju.tdwy.daomain.RoadMySQL;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 public class StringToJsonUtils {
 
@@ -77,5 +83,69 @@ public class StringToJsonUtils {
             e.printStackTrace();
         }
         return jsonObject;
+    }
+
+    public static ArrayList followAddFields(String carNum, Map map, RoadMapper roadMapper) throws IOException {
+        EsUtils esUtils = new EsUtils();
+        RestHighLevelClient client = esUtils.client;
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        QueryBuilder builder0 = QueryBuilders.matchQuery("carNum", carNum);
+        searchSourceBuilder.from(0)
+                .size(1)
+                .query(builder0);
+        SearchRequest searchRequest = new SearchRequest(Config.TDWY_INDEX);
+        searchRequest.source(searchSourceBuilder);
+        SearchResponse searchResponse = client.search(searchRequest);
+        SearchHit[] searchHits = searchResponse.getHits().getHits();
+        String picURL = "无图片";
+        if (searchHits.length < 1){
+            System.out.println("查询不到此车");
+        }else {
+            for (SearchHit searchHit:searchHits){
+                //System.out.println(searchHit.getSourceAsString());
+                picURL = (String)searchHit.getSourceAsMap().get("picName1");
+                picURL = picURL.replace("\\","/").replace("//","/");
+                String ip = picURL.split("/")[1];
+                Config config = new Config();
+                picURL = "http://211.81.50.158"+picURL.replace(ip+"/data",config.ipMap.get(ip));
+            }
+
+        }
+        Set<String> keys = map.keySet();
+        ArrayList fields_bind_time = new ArrayList();
+        for (String key:keys){
+            Map newMap = new HashMap();
+            Object accessTime = map.get(key);
+            RoadMySQL roadMySQL = roadMapper.getRoadByRoadNum(key);
+            String lng = roadMySQL.getLng();
+            String lat = roadMySQL.getLat();
+            newMap.put("picURL",picURL);
+            newMap.put("lng",lng);
+            newMap.put("lat",lat);
+            newMap.put("roadNum",key);
+            newMap.put("accessTime",accessTime);
+            fields_bind_time.add(newMap);
+        }
+        return fields_bind_time;
+    }
+
+//    public static void sortByAccesstime(ArrayList<Map> fields_bind_time){
+//        Collections.sort(fields_bind_time , (Map b1, Map b2) -> b2.get("").compareTo(b1.get("")));
+//        for (Map each:fields_bind_time){
+//            String accessTime = each.get("accessTime");
+//        }
+//    }
+
+    public static ArrayList<Map<String, String>> sortByAccesstime(ArrayList<Map<String, String>> list) {
+
+        //实现Collections接口进行排序
+        Collections.sort(list, new Comparator<Map<String, String>>() {
+            @Override
+            public int compare(Map<String, String> o1, Map<String, String> o2) {
+                return o1.get("accessTime").compareTo(o2.get("accessTime"));
+            }
+        });
+
+        return list;
     }
 }

@@ -149,6 +149,7 @@ public class ToBuildersUtils {
      */
     // 过滤carNumType，carNumColor，carColor，carBrand
     public static QueryBuilder addFilterBuilder(QueryBuilder builder0, String preparaString) throws JSONException {
+        System.out.println("start Filter.....");
         Map map = strToMap(preparaString);
         // try filtrate carNumType
         try {
@@ -227,7 +228,7 @@ public class ToBuildersUtils {
                     .must(builder0)
                     .must(builder1);
         }catch (Exception e){
-            System.out.println("No filtration carType");
+            System.out.println("No filtration day");
         }
 
         return builder0;

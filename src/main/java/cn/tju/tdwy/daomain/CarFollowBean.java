@@ -2,6 +2,7 @@ package cn.tju.tdwy.daomain;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class CarFollowBean {
@@ -94,19 +95,19 @@ public class CarFollowBean {
         this.carBType = carBType;
     }
 
-    public Map getCarAList() {
+    public ArrayList getCarAList() {
         return carAList;
     }
 
-    public void setCarAList(Map carAList) {
+    public void setCarAList(ArrayList carAList) {
         this.carAList = carAList;
     }
 
-    public Map getCarBList() {
+    public ArrayList getCarBList() {
         return carBList;
     }
 
-    public void setCarBList(Map carBList) {
+    public void setCarBList(ArrayList carBList) {
         this.carBList = carBList;
     }
 
@@ -149,8 +150,8 @@ public class CarFollowBean {
     private String carBColor;
     private String carAType;
     private String carBType;
-    private Map carAList;
-    private Map carBList;
+    private ArrayList carAList;
+    private ArrayList carBList;
     private int count;
 
 
