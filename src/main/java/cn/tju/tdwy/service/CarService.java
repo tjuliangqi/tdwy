@@ -51,11 +51,11 @@ public class CarService {
         sizeMap.put("false6",10);
         sizeMap.put("false7",1);
         sizeMap.put("true0",32);
-        sizeMap.put("true1",32);
+        sizeMap.put("true1",10);
         sizeMap.put("true2",32);
         sizeMap.put("true3",100);
-        sizeMap.put("true4",32);
-        sizeMap.put("true5",32);
+        sizeMap.put("true4",10);
+        sizeMap.put("true5",10);
         sizeMap.put("true6",10);
         sizeMap.put("true7",1);
         Map<String,Object> resultMap = new HashMap<>();
