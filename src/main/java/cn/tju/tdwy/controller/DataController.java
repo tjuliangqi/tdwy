@@ -1,5 +1,6 @@
 package cn.tju.tdwy.controller;
 
+import cn.tju.tdwy.Config;
 import cn.tju.tdwy.daomain.RetResponse;
 import cn.tju.tdwy.daomain.RetResult;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,17 +15,27 @@ import java.util.Map;
 import static cn.tju.tdwy.service.DataServer.*;
 
 @RestController
-@RequestMapping("/transport/data")
+@RequestMapping("/data")
 public class DataController {
 
     @RequestMapping(value = "/history", method = RequestMethod.POST)
     public RetResult<Map<String,Object>> dataHistory() {
         Map<String,Object> result = new HashMap<>();
+        Map<String,Object> roadNumMap = new HashMap<>();
+        Config config = new Config();
         try {
-            result = history();
+            roadNumMap = history();
+
         } catch (IOException e) {
             e.printStackTrace();
             return RetResponse.makeErrRsp("查询总量出错");
+        }
+        for (String each : roadNumMap.keySet()){
+            if (config.roadNum.containsKey(each)){
+                result.put(config.roadNum.get(each),roadNumMap.get(each));
+            }else {
+                result.put(each,roadNumMap.get(each));
+            }
         }
         return RetResponse.makeOKRsp(result);
     }
@@ -78,8 +89,8 @@ public class DataController {
     }
 
     @RequestMapping(value = "/time", method = RequestMethod.POST)
-    public RetResult<Map<String,Object>> dataTime() {
-        Map<String,Object> result = new HashMap<>();
+    public RetResult<Map<String,Map<String,Object>>> dataTime() {
+        Map<String,Map<String,Object>> result = new HashMap<>();
         try {
             result = time();
         } catch (IOException | ParseException e) {

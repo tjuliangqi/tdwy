@@ -17,7 +17,7 @@
 
     <insert id="insertUser" parameterType="cn.tju.tdwy.daomain.User">
         INSERT INTO users (root, email, username, passwd, keywords)
-        VALUES  (#{User.root}, #{User.email}, #{User.username}, #{User.passwd}, #{User.keywords})
+        VALUES  (#{user.root}, #{user.email}, #{user.username}, #{user.passwd}, #{user.keywords})
     </insert>
 
     <delete id="deleteUserById" parameterType="java.lang.Integer">

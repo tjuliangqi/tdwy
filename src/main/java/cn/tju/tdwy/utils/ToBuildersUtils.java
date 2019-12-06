@@ -228,7 +228,7 @@ public class ToBuildersUtils {
                     .must(builder0)
                     .must(builder1);
         }catch (Exception e){
-            System.out.println("No filtration day");
+            System.out.println("No filtration carType");
         }
 
         return builder0;

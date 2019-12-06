@@ -22,11 +22,11 @@ public class RoadController {
     RoadMapper roadMapper;
     @RequestMapping(value = "/textSearchList", method = RequestMethod.POST)
     public RetResult<Map> searchList(@RequestBody Map<String,Object> json) {
-        String type = (String) json.get("type");
-        String value = (String) json.get("value");
-        Boolean ifPrepara = (Boolean) json.get("ifPrepara");
-        String preparaString = (String) json.get("preparaString");
-        Integer page = (Integer) json.get("page");
+        String type = String.valueOf(json.get("type"));
+        String value = String.valueOf(json.get("value"));
+        Boolean ifPrepara = Boolean.valueOf(json.get("ifPrepara").toString());
+        String preparaString = String.valueOf(json.get("preparaString"));
+        Integer page = Integer.valueOf(json.get("page").toString());
         Map result = null;
         try {
             if (type.equals("4")){
@@ -45,8 +45,8 @@ public class RoadController {
 
     @RequestMapping(value = "/getPrepara", method = RequestMethod.POST)
     public RetResult<Map> getprepara(@RequestBody Map<String,Object> json) {
-        String type = (String) json.get("type");
-        String value = (String) json.get("value");
+        String type = String.valueOf(json.get("type"));
+        String value = String.valueOf(json.get("value"));
         Map result = null;
         try {
             if (type.equals("4")){

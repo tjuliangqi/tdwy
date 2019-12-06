@@ -21,7 +21,7 @@ import static cn.tju.tdwy.service.CarService.carSearchList;
 import static cn.tju.tdwy.service.CarService.picSearch;
 
 @RestController
-@RequestMapping("/transport/car")
+@RequestMapping("/car")
 public class CarController {
     @Autowired
     RoadMapper roadMapper;
