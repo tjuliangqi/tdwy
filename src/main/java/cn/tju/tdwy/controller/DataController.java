@@ -91,11 +91,20 @@ public class DataController {
     @RequestMapping(value = "/time", method = RequestMethod.POST)
     public RetResult<Map<String,Map<String,Object>>> dataTime() {
         Map<String,Map<String,Object>> result = new HashMap<>();
+        Map<String,Map<String,Object>> roadNumMap = new HashMap<>();
+        Config config = new Config();
         try {
-            result = time();
+            roadNumMap = time();
         } catch (IOException | ParseException e) {
             e.printStackTrace();
             return RetResponse.makeErrRsp("分时段统计出错");
+        }
+        for (String each : roadNumMap.keySet()){
+            if (config.roadNum.containsKey(each)){
+                result.put(config.roadNum.get(each),roadNumMap.get(each));
+            }else {
+                result.put(each,roadNumMap.get(each));
+            }
         }
         return RetResponse.makeOKRsp(result);
     }
