@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class CarBean {
-    private String day;
+    //private String day;
     private String carNum;
     private String carNumType;
     private String carNumColor;
@@ -12,13 +12,6 @@ public class CarBean {
     private String carType;
     private ArrayList fields_bind_time;
 
-    public String getDay() {
-        return day;
-    }
-
-    public void setDay(String day) {
-        this.day = day;
-    }
 
     public String getCarNum() {
         return carNum;
@@ -71,8 +64,7 @@ public class CarBean {
     @Override
     public String toString() {
         return "CarBean{" +
-                "day='" + day + '\'' +
-                ", carNum='" + carNum + '\'' +
+                "carNum='" + carNum + '\'' +
                 ", carNumType='" + carNumType + '\'' +
                 ", carNumColor='" + carNumColor + '\'' +
                 ", carColor='" + carColor + '\'' +

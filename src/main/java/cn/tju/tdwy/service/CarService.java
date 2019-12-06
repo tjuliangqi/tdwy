@@ -35,18 +35,27 @@ public class CarService {
      * @throws JSONException
      */
     public static Object carSearchList(String type, String value, boolean ifPrepara, String preparaString, RoadMapper roadMapper) throws IOException, JSONException {
-        List<String> typeList1 = Arrays.asList("0", "1", "2", "4", "5");
-        List<String> typeList2 = Arrays.asList("3");
-        List<String> typeList3 = Arrays.asList("6", "7");
+        List<String> typeList1 = Arrays.asList("0", "2");
+        List<String> typeList2 = Arrays.asList("1", "4", "5");
+        List<String> typeList3 = Arrays.asList("3");
+        List<String> typeList4 = Arrays.asList("6", "7");
         Map<String, Integer> sizeMap = new HashMap<>();
-        sizeMap.put("0",1);
-        sizeMap.put("1",10);
-        sizeMap.put("2",1);
-        sizeMap.put("3",100);
-        sizeMap.put("4",10);
-        sizeMap.put("5",10);
-        sizeMap.put("6",10);
-        sizeMap.put("7",1);
+        sizeMap.put("false0",1);
+        sizeMap.put("false1",10);
+        sizeMap.put("false2",1);
+        sizeMap.put("false3",100);
+        sizeMap.put("false4",10);
+        sizeMap.put("false5",10);
+        sizeMap.put("false6",10);
+        sizeMap.put("false7",1);
+        sizeMap.put("true0",32);
+        sizeMap.put("true1",32);
+        sizeMap.put("true2",32);
+        sizeMap.put("true3",100);
+        sizeMap.put("true4",32);
+        sizeMap.put("true5",32);
+        sizeMap.put("true6",10);
+        sizeMap.put("true7",1);
         Map<String,Object> resultMap = new HashMap<>();
         Object result = new Object();
         EsUtils esUtils = new EsUtils();
@@ -56,6 +65,45 @@ public class CarService {
         SearchSourceBuilder searchSourceBuilder;
         searchSourceBuilder = queryTextToBuilder(type, value, ifPrepara, preparaString, sizeMap);
         if (typeList1.contains(type)){
+            SearchRequest searchRequest = new SearchRequest(Config.CAR_INDEX);
+            searchRequest.source(searchSourceBuilder);
+            SearchResponse searchResponse = client.search(searchRequest);
+            SearchHit[] searchHits = searchResponse.getHits().getHits();
+
+            if (searchHits.length < 1){
+                System.out.println("查询结果为空，返回空map");
+            }else {
+                ArrayList<Map> fields_bind_time_add = new ArrayList<>();
+                CarBean carBean = new CarBean();
+                for (SearchHit searchHit:searchHits){
+                    //System.out.println(searchHit.getSourceAsString());
+
+                    String day = (String)searchHit.getSourceAsMap().get("day");
+                    day = day.replace("T00:00:00","");
+                    String carNum = (String)searchHit.getSourceAsMap().get("carNum");
+                    String carNumType = (String)searchHit.getSourceAsMap().get("carNumType");
+                    String carNumColor = (String)searchHit.getSourceAsMap().get("carNumColor");
+                    String carColor = (String)searchHit.getSourceAsMap().get("carColor");
+                    String carType = (String)searchHit.getSourceAsMap().get("carBrand");
+                    String fields_bind_time_text = (String)searchHit.getSourceAsMap().get("fields_bind_time");
+
+                    // fields_bind_time 封装成json返回
+                    ArrayList<Map> fields_bind_time = stringToJson(fields_bind_time_text, roadMapper);
+                    fields_bind_time_add.addAll(fields_bind_time);
+                    //carBean.setDay(day);
+                    carBean.setCarNum(carNum);
+                    carBean.setCarNumType(carNumType);
+                    carBean.setCarNumColor(carNumColor);
+                    carBean.setCarColor(carColor);
+                    carBean.setCarType(carType);
+                    carBean.setFields_bind_time(fields_bind_time_add);
+                    //carBeans.add(carBean);
+                }
+                carBeans.add(carBean);
+                resultMap.put("result",carBeans);
+            }
+            result = carBeans;
+        } else if (typeList2.contains(type)){
             SearchRequest searchRequest = new SearchRequest(Config.CAR_INDEX);
             searchRequest.source(searchSourceBuilder);
             SearchResponse searchResponse = client.search(searchRequest);
@@ -79,7 +127,7 @@ public class CarService {
                     // fields_bind_time 封装成json返回
                     ArrayList<Map> fields_bind_time = stringToJson(fields_bind_time_text, roadMapper);
 
-                    carBean.setDay(day);
+                    //carBean.setDay(day);
                     carBean.setCarNum(carNum);
                     carBean.setCarNumType(carNumType);
                     carBean.setCarNumColor(carNumColor);
@@ -92,7 +140,7 @@ public class CarService {
                 resultMap.put("result",carBeans);
             }
             result = carBeans;
-        } else if(typeList2.contains(type)){
+        } else if(typeList3.contains(type)){
             SearchRequest searchRequest = new SearchRequest(Config.TDWY_INDEX);
             searchRequest.source(searchSourceBuilder);
             SearchResponse searchResponse = client.search(searchRequest);

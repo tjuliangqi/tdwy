@@ -23,20 +23,23 @@ public class ToBuildersUtils {
             if (type.equals("0")) {
                 builder0 = QueryBuilders.matchQuery("carNum", value);
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("0"))
-                        .query(builder0);
+                        .size(sizeMap.get("false0"))
+                        .query(builder0)
+                        .sort("day",SortOrder.DESC);
             } else if (type.equals("1")) {
                 builder0 = QueryBuilders.matchAllQuery();
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("1"))
-                        .query(builder0);
+                        .size(sizeMap.get("false1"))
+                        .query(builder0)
+                        .sort("day",SortOrder.DESC);
             } else if (type.equals("2")) {
                 //builder0 = QueryBuilders.matchQuery("hashcode", value);
                 //用车牌检索
                 builder0 = QueryBuilders.matchQuery("carNum", value);
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("2"))
-                        .query(builder0);
+                        .size(sizeMap.get("false2"))
+                        .query(builder0)
+                        .sort("day",SortOrder.DESC);
             } else if (type.equals("3")) {
                 //value = "津JHT808在2019年6月30号4点30分到2019年6月30号4点30分的行车记录";
                 Map map = textToMap(value);
@@ -47,26 +50,28 @@ public class ToBuildersUtils {
                                 .from(map.get("beginTime"))
                                 .to(map.get("endTime")));
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("3"))
+                        .size(sizeMap.get("false3"))
                         .sort("accessTime",SortOrder.ASC)
                         .query(builder0);
             } else if (type.equals("4")) {
                 builder0 = QueryBuilders.rangeQuery("countIn")
                         .from(1);
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("4"))
-                        .query(builder0);
+                        .size(sizeMap.get("false4"))
+                        .query(builder0)
+                        .sort("day",SortOrder.DESC);
             } else if (type.equals("5")) {
                 builder0 = QueryBuilders.rangeQuery("nightTimeNum")
                         .from(1);
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("5"))
-                        .query(builder0);
+                        .size(sizeMap.get("false5"))
+                        .query(builder0)
+                        .sort("day",SortOrder.DESC);
             } else if (type.equals("6")) {
                 builder0 = QueryBuilders.rangeQuery("count")
                         .from(3);
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("6"))
+                        .size(sizeMap.get("false6"))
                         .query(builder0);
             } else {
                 // value = "['黑RJT353', '鲁A75020']";
@@ -88,30 +93,47 @@ public class ToBuildersUtils {
                                 .must(QueryBuilders.matchQuery("carA",carBName))
                                 .must(QueryBuilders.matchQuery("carB",carAName)));
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("7"))
+                        .size(sizeMap.get("false7"))
                         .query(builder0);
             }
-        } else { // 只筛选1、4、5
-            if (type.equals("1")) {
+        } else { // 只筛选0、1、2、4、5 其中0、2只筛选时间 // {0:车牌检索, 1:推荐, 2:图片检索, 3:自然语言检索, 4:首次入城车辆, 5:昼伏夜出车辆, 6:伴随车辆, 7:碰撞分析}
+            if (type.equals("0")) {
+                builder0 = QueryBuilders.matchQuery("carNum", value);
+                builderAdd = addFilterBuilder(builder0, preparaString);
+                searchSourceBuilder.from(0)
+                        .size(sizeMap.get("true0"))
+                        .query(builderAdd)
+                        .sort("day",SortOrder.DESC);
+            } else if (type.equals("1")) {
                 builder0 = QueryBuilders.matchAllQuery();
                 builderAdd = addFilterBuilder(builder0, preparaString);
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("1"))
-                        .query(builderAdd);
+                        .size(sizeMap.get("true1"))
+                        .query(builderAdd)
+                        .sort("day",SortOrder.DESC);
+            } else if (type.equals("2")) {
+                builder0 = QueryBuilders.matchAllQuery();
+                builderAdd = addFilterBuilder(builder0, preparaString);
+                searchSourceBuilder.from(0)
+                        .size(sizeMap.get("true2"))
+                        .query(builderAdd)
+                        .sort("day",SortOrder.DESC);
             } else if (type.equals("4")) {
                 builder0 = QueryBuilders.rangeQuery("countIn")
                         .from(1);
                 builderAdd = addFilterBuilder(builder0, preparaString);
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("4"))
-                        .query(builderAdd);
+                        .size(sizeMap.get("true4"))
+                        .query(builderAdd)
+                        .sort("day",SortOrder.DESC);
             } else {
                 builder0 = QueryBuilders.rangeQuery("nightTimeNum")
                         .from(1);
                 builderAdd = addFilterBuilder(builder0, preparaString);
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("5"))
-                        .query(builderAdd);
+                        .size(sizeMap.get("true5"))
+                        .query(builderAdd)
+                        .sort("day",SortOrder.DESC);
             }
         }
 
@@ -192,6 +214,22 @@ public class ToBuildersUtils {
         }catch (Exception e){
             System.out.println("No filtration carType");
         }
+        // try filtrate day
+        try {
+            String day = map.get("day").toString().replace("[\"", "").replace("\"]", "");
+            String[] dayList = day.split("\",\"");
+
+            QueryBuilder builder1 = QueryBuilders.rangeQuery("day")
+                    .from(dayList[0])
+                    .to(dayList[1]);
+
+            builder0 = QueryBuilders.boolQuery()
+                    .must(builder0)
+                    .must(builder1);
+        }catch (Exception e){
+            System.out.println("No filtration carType");
+        }
+
         return builder0;
     }
 
