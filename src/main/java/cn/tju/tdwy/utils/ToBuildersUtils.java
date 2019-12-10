@@ -75,7 +75,8 @@ public class ToBuildersUtils {
                         .query(builder0);
             } else {
                 // value = "['黑RJT353', '鲁A75020']";
-                String[] carArray = value.replace("['","").replace("']","").split("', '");
+                //System.out.println(value);
+                String[] carArray = value.replace("[\"","").replace("\"]","").split("\",\"");
                 List<String> carList= Arrays.asList(carArray);
                 String carAName = "";
                 String carBName = "";

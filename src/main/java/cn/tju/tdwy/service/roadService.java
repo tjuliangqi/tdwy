@@ -105,6 +105,7 @@ public class roadService {
         SearchRequest searchRequest = new SearchRequest(Config.TDWYINDEX);
         String roadText = null;
         String roadNum = null;
+        //增加判断检索必须存在roadText字段 ----wangya
         if (type.equals("1")){
             boolQueryBuilder.must(QueryBuilders.matchAllQuery());
         }else {

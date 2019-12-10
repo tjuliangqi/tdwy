@@ -1,6 +1,8 @@
 package cn.tju.tdwy.service;
 
 import cn.tju.tdwy.Config;
+import cn.tju.tdwy.dao.RoadMapper;
+import cn.tju.tdwy.daomain.RoadMySQL;
 import cn.tju.tdwy.utils.EsUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -16,13 +18,17 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
+import org.json.JSONException;
 import org.omg.CORBA.OBJ_ADAPTER;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static cn.tju.tdwy.utils.JsonToMapUtils.strToMap;
 
 /**
  * author: 王亚
@@ -311,8 +317,63 @@ public class DataServer {
         return later;
     }
 
+    /**
+     * 新增首页显示三辆车最新日期的轨迹，轨迹一天之内不变
+     * @param roadMapper
+     * @return Map<String,Object>
+     * @throws IOException
+     */
+
+    public static Map<String,Object> place(RoadMapper roadMapper) throws IOException {
+        Map<String,Object> result = new HashMap<>();
+        EsUtils esUtils = new EsUtils();
+        RestHighLevelClient client = esUtils.getConnection();
+        QueryBuilder queryBuilder = QueryBuilders.termQuery("day","2019-07-30T00:00:00");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(queryBuilder).size(3);
+        SearchResponse searchResponse = null;
+        SearchRequest searchRequest = new SearchRequest(Config.CAR_INDEX1);
+        searchRequest.source(searchSourceBuilder);
+        try {
+            searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        client.close();
+        SearchHit[] searchHits = searchResponse.getHits().getHits();
+        Map<String,List<String>> carMap = new HashMap<>();
+        for (SearchHit searchHit : searchHits){
+            Map<String,Object> hitMap = searchHit.getSourceAsMap();
+            Map map = new HashMap();
+            List<String> list = new ArrayList<>();
+            try {
+                map = strToMap(hitMap.get("roadList").toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            for (Object key:map.keySet()){
+                list.add(map.get(key).toString());
+            }
+            carMap.put(hitMap.get("carNum").toString(),list);
+        }
+        for (String each:carMap.keySet()){
+            Map<String,Map<String,String>> placeMap = new HashMap<>();
+            for(String roadNum:carMap.get(each)){
+                RoadMySQL roadMySQL = roadMapper.getRoadByRoadNum(roadNum);
+                Map<String,String> xy = new HashMap<>();
+                String lng = roadMySQL.getLng();
+                String lat = roadMySQL.getLat();
+                xy.put("lng",lng);
+                xy.put("lat",lat);
+                placeMap.put(roadNum,xy);
+            }
+            result.put(each,placeMap);
+        }
+        return result;
+    }
+
     public static void main(String[] args) throws IOException, ParseException {
-        time();
+        night();
     }
 }
 

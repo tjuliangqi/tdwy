@@ -1,8 +1,10 @@
 package cn.tju.tdwy.controller;
 
 import cn.tju.tdwy.Config;
+import cn.tju.tdwy.dao.RoadMapper;
 import cn.tju.tdwy.daomain.RetResponse;
 import cn.tju.tdwy.daomain.RetResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +20,8 @@ import static cn.tju.tdwy.service.DataServer.*;
 @RequestMapping("/data")
 public class DataController {
 
+    @Autowired
+    RoadMapper roadMapper;
     @RequestMapping(value = "/history", method = RequestMethod.POST)
     public RetResult<Map<String,Object>> dataHistory() {
         Map<String,Object> result = new HashMap<>();
@@ -109,7 +113,17 @@ public class DataController {
         return RetResponse.makeOKRsp(result);
     }
 
-
+    @RequestMapping(value = "/places", method = RequestMethod.POST)
+    public RetResult<Map<String,Object>> places() {
+        Map<String,Object> result = new HashMap<>();
+        try {
+            result = place(roadMapper);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return RetResponse.makeErrRsp("查询首页出错");
+        }
+        return RetResponse.makeOKRsp(result);
+    }
 
 
 }
