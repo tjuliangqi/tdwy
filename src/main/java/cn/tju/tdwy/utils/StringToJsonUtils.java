@@ -25,8 +25,8 @@ public class StringToJsonUtils {
      * @param roadMapper
      * @return
      */
-    public static ArrayList<Map> stringToJson(String string, RoadMapper roadMapper){
-        ArrayList<Map> fields_list = new ArrayList<>();
+    public static ArrayList<Map<String,String>> stringToJson(String string, RoadMapper roadMapper){
+        ArrayList<Map<String,String>> fields_list = new ArrayList<>();
         try {
             string = string.replace("/","\\\\");
             //字符串转换JSON数组
@@ -35,7 +35,7 @@ public class StringToJsonUtils {
             if(jsonArray.length() > 0){
                 for (int i = 0;i < jsonArray.length();i++) {
                     //获得json数据
-                    Map<String,Object> map = new HashMap<>();
+                    Map<String,String> map = new HashMap<>();
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     //根据key建取值
                     String accessTime = jsonObject.getString("accessTime");
@@ -85,7 +85,7 @@ public class StringToJsonUtils {
         return jsonObject;
     }
 
-    public static ArrayList followAddFields(String carNum, Map map, RoadMapper roadMapper) throws IOException {
+    public static ArrayList<Map<String,String>> followAddFields(String carNum, Map map, RoadMapper roadMapper) throws IOException {
         EsUtils esUtils = new EsUtils();
         RestHighLevelClient client = esUtils.client;
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -112,10 +112,10 @@ public class StringToJsonUtils {
 
         }
         Set<String> keys = map.keySet();
-        ArrayList fields_bind_time = new ArrayList();
+        ArrayList<Map<String,String>> fields_bind_time = new ArrayList();
         for (String key:keys){
-            Map newMap = new HashMap();
-            Object accessTime = map.get(key);
+            Map<String,String> newMap = new HashMap();
+            String accessTime = (String)map.get(key);
             RoadMySQL roadMySQL = roadMapper.getRoadByRoadNum(key);
             String lng = roadMySQL.getLng();
             String lat = roadMySQL.getLat();

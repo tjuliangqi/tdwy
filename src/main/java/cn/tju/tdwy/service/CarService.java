@@ -75,7 +75,7 @@ public class CarService {
             if (searchHits.length < 1){
                 System.out.println("查询结果为空，返回空map");
             }else {
-                ArrayList<Map> fields_bind_time_add = new ArrayList<>();
+                ArrayList<Map<String,String>> fields_bind_time_add = new ArrayList<>();
                 CarBean carBean = new CarBean();
                 for (SearchHit searchHit:searchHits){
                     //System.out.println(searchHit.getSourceAsString());
@@ -90,7 +90,7 @@ public class CarService {
                     String fields_bind_time_text = (String)searchHit.getSourceAsMap().get("fields_bind_time");
 
                     // fields_bind_time 封装成json返回
-                    ArrayList<Map> fields_bind_time = stringToJson(fields_bind_time_text, roadMapper);
+                    ArrayList<Map<String,String>> fields_bind_time = stringToJson(fields_bind_time_text, roadMapper);
                     fields_bind_time_add.addAll(fields_bind_time);
                     //carBean.setDay(day);
                     carBean.setCarNum(carNum);
@@ -98,7 +98,8 @@ public class CarService {
                     carBean.setCarNumColor(carNumColor);
                     carBean.setCarColor(carColor);
                     carBean.setCarType(carType);
-                    carBean.setFields_bind_time(fields_bind_time_add);
+                    ArrayList<Map<String,String>> fields_bind_time_add2 = sortByAccesstime(fields_bind_time_add);
+                    carBean.setFields_bind_time(fields_bind_time_add2);
                     //carBeans.add(carBean);
                 }
                 carBeans.add(carBean);
@@ -127,7 +128,7 @@ public class CarService {
                     String fields_bind_time_text = (String)searchHit.getSourceAsMap().get("fields_bind_time");
 
                     // fields_bind_time 封装成json返回
-                    ArrayList<Map> fields_bind_time = stringToJson(fields_bind_time_text, roadMapper);
+                    ArrayList<Map<String,String>> fields_bind_time = stringToJson(fields_bind_time_text, roadMapper);
 
                     //carBean.setDay(day);
                     carBean.setCarNum(carNum);
@@ -135,7 +136,7 @@ public class CarService {
                     carBean.setCarNumColor(carNumColor);
                     carBean.setCarColor(carColor);
                     carBean.setCarType(carType);
-                    carBean.setFields_bind_time(fields_bind_time);
+                    carBean.setFields_bind_time(sortByAccesstime(fields_bind_time));
                     carBeans.add(carBean);
                 }
 
@@ -152,7 +153,7 @@ public class CarService {
                 System.out.println("查询结果为空，返回空map");
             }else {
                 CarBean carBean = new CarBean();
-                ArrayList<Map> fields_bind_time = new ArrayList<>();
+                ArrayList<Map<String,String>> fields_bind_time = new ArrayList<>();
                 String carNum = "";
                 String carNumTypeText = "";
                 String carNumColorText = "";
@@ -198,7 +199,7 @@ public class CarService {
                 carBean.setCarNumColor(carNumColorText);
                 carBean.setCarColor(carColorText);
                 carBean.setCarType(carTypeText);
-                carBean.setFields_bind_time(fields_bind_time);
+                carBean.setFields_bind_time(sortByAccesstime(fields_bind_time));
                 carBeans.add(carBean);
                 resultMap.put("result", carBeans);
             }
@@ -319,10 +320,26 @@ public class CarService {
             Set result2 = new HashSet(carNumColorList);
             Set result3 = new HashSet(carColorList);
             Set result4 = new HashSet(carBrandList);
-            selectTags.put("carNumType",result1);
-            selectTags.put("carNumColor",result2);
-            selectTags.put("carColor",result3);
-            selectTags.put("carType",result4);
+            if (result1.size()>10) {
+                List <String> list = new ArrayList<String>(result1);
+                 result1 = new HashSet(list.subList(0,10));
+            }
+            if (result2.size()>10) {
+                List <String> list = new ArrayList<String>(result2);
+                result2 = new HashSet(list.subList(0,10));
+            }
+            if (result3.size()>10) {
+                List <String> list = new ArrayList<String>(result3);
+                result3 = new HashSet(list.subList(0,10));
+            }
+            if (result4.size()>10) {
+                List <String> list = new ArrayList<String>(result4);
+                result4 = new HashSet(list.subList(0,10));
+            }
+            selectTags.put("号牌种类",result1);
+            selectTags.put("号牌颜色",result2);
+            selectTags.put("车身颜色",result3);
+            selectTags.put("车辆品牌",result4);
         }
         return selectTags;
     }
