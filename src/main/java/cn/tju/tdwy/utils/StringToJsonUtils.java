@@ -122,7 +122,9 @@ public class StringToJsonUtils {
             newMap.put("picURL",picURL);
             newMap.put("lng",lng);
             newMap.put("lat",lat);
-            newMap.put("roadNum",key);
+            //newMap.put("roadNum",key);
+            Config config = new Config();
+            newMap.put("roadText",config.roadNum.get(key));
             newMap.put("accessTime",accessTime);
             fields_bind_time.add(newMap);
         }

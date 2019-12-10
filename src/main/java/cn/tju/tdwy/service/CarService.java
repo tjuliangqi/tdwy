@@ -275,9 +275,9 @@ public class CarService {
      */
     public static Map<String, Object> carPrepara(String type, String value) throws IOException, JSONException {
         Map<String, Integer> sizeMap = new HashMap<>();
-        sizeMap.put("1",10000);
-        sizeMap.put("4",1000);
-        sizeMap.put("5",1000);
+        sizeMap.put("false1",10000);
+        sizeMap.put("false4",1000);
+        sizeMap.put("false5",1000);
         EsUtils esUtils = new EsUtils();
         RestHighLevelClient client = esUtils.client;
         SearchSourceBuilder searchSourceBuilder;
