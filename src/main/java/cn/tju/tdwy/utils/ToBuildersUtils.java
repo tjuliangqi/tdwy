@@ -154,7 +154,7 @@ public class ToBuildersUtils {
         Map map = strToMap(preparaString);
         // try filtrate carNumType
         try {
-            String carNumType = map.get("carNumType").toString().replace("[\"", "").replace("\"]", "");
+            String carNumType = map.get("号牌种类").toString().replace("[\"", "").replace("\"]", "");
             String[] carNumTypeList = carNumType.split("\",\"");
             QueryBuilder builder1 = QueryBuilders.matchQuery("carNumType", carNumTypeList[0]);
             for(int i =1;i<carNumTypeList.length;i++){
@@ -170,7 +170,7 @@ public class ToBuildersUtils {
         }
         // try filtrate carNumColor
         try {
-            String carNumColor = map.get("carNumColor").toString().replace("[\"", "").replace("\"]", "");
+            String carNumColor = map.get("号牌颜色").toString().replace("[\"", "").replace("\"]", "");
             String[] carNumColorList = carNumColor.split("\",\"");
             QueryBuilder builder1 = QueryBuilders.matchQuery("carNumColor", carNumColorList[0]);
             for(int i =1;i<carNumColorList.length;i++){
@@ -186,7 +186,7 @@ public class ToBuildersUtils {
         }
         // try filtrate carColor
         try {
-            String carColor = map.get("carColor").toString().replace("[\"", "").replace("\"]", "");
+            String carColor = map.get("车身颜色").toString().replace("[\"", "").replace("\"]", "");
             String[] carColorList = carColor.split("\",\"");
             QueryBuilder builder1 = QueryBuilders.matchQuery("carColor", carColorList[0]);
             for(int i =1;i<carColorList.length;i++){
@@ -202,7 +202,7 @@ public class ToBuildersUtils {
         }
         // try filtrate carType
         try {
-            String carBrand = map.get("carType").toString().replace("[\"", "").replace("\"]", "");
+            String carBrand = map.get("车辆品牌").toString().replace("[\"", "").replace("\"]", "");
             String[] carBrandList = carBrand.split("\",\"");
             QueryBuilder builder1 = QueryBuilders.matchQuery("carBrand", carBrandList[0]);
             for(int i =1;i<carBrandList.length;i++){
