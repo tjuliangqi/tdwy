@@ -176,12 +176,12 @@ public class roadService {
         searchSourceBuilder.query(boolQueryBuilder);
         searchSourceBuilder.from(page);
         searchSourceBuilder.size(20);
-        System.out.println(boolQueryBuilder);
+//        System.out.println(boolQueryBuilder);
         searchRequest.source(searchSourceBuilder);
         SearchResponse searchResponse;
         try {
             searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-            System.out.println(searchRequest);
+//            System.out.println(searchRequest);
         } catch (IOException e) {
             e.printStackTrace();
             client.close();

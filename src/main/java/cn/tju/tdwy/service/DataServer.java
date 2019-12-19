@@ -39,13 +39,14 @@ public class DataServer {
 
     /**
      * 路口过车数量
-     * @return Map<String,Object>
+     *
+     * @return Map<String   ,   Object>
      * @throws IOException
      */
-    public static Map<String,Object> history() throws IOException {
+    public static Map<String, Object> history() throws IOException {
         EsUtils esUtils = new EsUtils();
         RestHighLevelClient client = esUtils.getConnection();
-        Map<String,Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
         QueryBuilder queryBuilder = QueryBuilders.matchAllQuery();
         TermsAggregationBuilder aggregationBuilder = AggregationBuilders.terms("per_count").field("roadNum").size(100);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().size(0);
@@ -62,7 +63,7 @@ public class DataServer {
         ParsedStringTerms parsedStringTerms = searchResponse.getAggregations().get("per_count");
         List<? extends Terms.Bucket> buckets = parsedStringTerms.getBuckets();
         for (Terms.Bucket bucket : buckets) {
-            result.put(bucket.getKey().toString(),bucket.getDocCount());
+            result.put(bucket.getKey().toString(), bucket.getDocCount());
         }
         return result;
     }
@@ -70,11 +71,12 @@ public class DataServer {
 
     /**
      * 昼伏夜出数量
-     * @return Map<String,Object>
+     *
+     * @return Map<String   ,   Object>
      * @throws IOException
      */
-    public static Map<String,Object> night() throws IOException {
-        Map<String,Object> result = new HashMap<>();
+    public static Map<String, Object> night() throws IOException {
+        Map<String, Object> result = new HashMap<>();
         EsUtils esUtils = new EsUtils();
         RestHighLevelClient client = esUtils.getConnection();
         QueryBuilder queryBuilder = QueryBuilders.matchAllQuery();
@@ -89,7 +91,7 @@ public class DataServer {
             e.printStackTrace();
         }
         long all = searchResponse.getHits().getTotalHits();
-        result.put("all",all);
+        result.put("all", all);
         SearchRequest searchRequest_night = new SearchRequest(Config.NIGHT_OUT_INDEX);
         searchRequest_night.source(searchSourceBuilder);
         try {
@@ -98,8 +100,8 @@ public class DataServer {
             e.printStackTrace();
         }
         long night = searchResponse.getHits().getTotalHits();
-        result.put("night",night);
-        result.put("day",all-night);
+        result.put("night", night);
+        result.put("day", all - night);
         client.close();
 
         return result;
@@ -108,20 +110,21 @@ public class DataServer {
 
     /**
      * 车辆类型统计
-     * @return Map<String,Object>
+     *
+     * @return Map<String   ,   Object>
      * @throws IOException
      */
-    public static Map<String,Object> type() throws IOException {
-        Map<String,Object> result = new HashMap<>();
-        Map<String,Object> roadMap = history();
+    public static Map<String, Object> type() throws IOException {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> roadMap = history();
         Config config = new Config();
-        for (String each:roadMap.keySet()){
-            if (config.roadNum.containsKey(each)){
-                result.put(config.roadNum.get(each),aggsCarType(each));
-            }
-            else {
+        for (String each : roadMap.keySet()) {
+            if (config.roadNum.containsKey(each)) {
+                result.put(config.roadNum.get(each), aggsCarType(each));
 
-                result.put(each,aggsCarType(each));
+            } else {
+
+                result.put(each, aggsCarType(each));
             }
 
         }
@@ -131,21 +134,22 @@ public class DataServer {
 
     /**
      * 频繁入城
-     * @problem:未设置游标查询，返回20条
-     * @return Map<String,Object>
+     *
+     * @return Map<String   ,   Object>
      * @throws IOException
+     * @problem:未设置游标查询，返回30条
      */
-    public static Map<String,Object> city() throws IOException {
-        Map<String,Object> result = new HashMap<>();
-        Map<String,Object> in = new HashMap<>();
-        Map<String,Object> out = new HashMap<>();
+    public static Map<String, Object> city() throws IOException {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> in = new HashMap<>();
+        Map<String, Object> out = new HashMap<>();
         EsUtils esUtils = new EsUtils();
         RestHighLevelClient client = esUtils.getConnection();
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
         queryBuilder.must(QueryBuilders.matchAllQuery());
         queryBuilder.filter(QueryBuilders.rangeQuery("countIn").gt(5));
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(queryBuilder).size(20).sort("countIn", SortOrder.DESC);
+        searchSourceBuilder.query(queryBuilder).size(30).sort("countIn", SortOrder.DESC);
         SearchRequest searchRequest = new SearchRequest(Config.CITY_IN_OUT_INDEX);
         searchRequest.source(searchSourceBuilder);
         SearchResponse searchResponse = null;
@@ -156,31 +160,32 @@ public class DataServer {
         }
         client.close();
         SearchHit[] searchHits = searchResponse.getHits().getHits();
-        for (SearchHit searchHit : searchHits){
-            Map<String,Object> hitMap = searchHit.getSourceAsMap();
-            in.put(hitMap.get("carNum").toString(),Integer.valueOf(hitMap.get("countIn").toString()));
-            out.put(hitMap.get("carNum").toString(),Integer.valueOf(hitMap.get("countIn").toString())-(int)(Math.random()*2)+1);
+        for (SearchHit searchHit : searchHits) {
+            Map<String, Object> hitMap = searchHit.getSourceAsMap();
+            in.put(hitMap.get("carNum").toString(), Integer.valueOf(hitMap.get("countIn").toString()));
+            out.put(hitMap.get("carNum").toString(), Integer.valueOf(hitMap.get("countIn").toString()) - (int) (Math.random() * 2) + 1);
         }
-        result.put("in",in);
-        result.put("out",out);
+        result.put("in", in);
+        result.put("out", out);
         return result;
     }
 
     /**
      * 频繁夜出
-     * @problem:未设置游标查询,返回20条
-     * @return Map<String,Object>
+     *
+     * @return Map<String   ,   Object>
      * @throws IOException
+     * @problem:未设置游标查询,返回3条
      */
-    public static Map<String,Object> onlyNight() throws IOException {
-        Map<String,Object> result = new HashMap<>();
+    public static Map<String, Object> onlyNight() throws IOException {
+        Map<String, Object> result = new HashMap<>();
         EsUtils esUtils = new EsUtils();
         RestHighLevelClient client = esUtils.getConnection();
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
         queryBuilder.must(QueryBuilders.matchAllQuery());
         queryBuilder.filter(QueryBuilders.rangeQuery("dayNum").gt(20));
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(queryBuilder).size(20);
+        searchSourceBuilder.query(queryBuilder).size(30);
         SearchRequest searchRequest = new SearchRequest(Config.NIGHT_OUT_INDEX);
         searchRequest.source(searchSourceBuilder);
         SearchResponse searchResponse = null;
@@ -192,25 +197,26 @@ public class DataServer {
         client.close();
 
         SearchHit[] searchHits = searchResponse.getHits().getHits();
-        for (SearchHit searchHit : searchHits){
-            Map<String,Object> hitMap = searchHit.getSourceAsMap();
-            result.put(hitMap.get("carNum").toString(),hitMap.get("dayNum"));
+        for (SearchHit searchHit : searchHits) {
+            Map<String, Object> hitMap = searchHit.getSourceAsMap();
+            result.put(hitMap.get("carNum").toString(), hitMap.get("dayNum"));
         }
         return result;
     }
 
     /**
      * 分段统计
-     * @return Map<String,Object>
+     *
+     * @return Map<String   ,   Object>
      * @throws IOException
      * @throws ParseException
      */
-    public static Map<String,Map<String,Object>> time() throws IOException, ParseException {
-        Map<String,Map<String,Object>> result = new HashMap<>();
+    public static Map<String, Map<String, Object>> time() throws IOException, ParseException {
+        Map<String, Map<String, Object>> result = new HashMap<>();
         String time = "2019-07-01T00:00:00.000";
-        for (int i = 0; i <12; i++){
-            Map<String,Object> perMap = searchByHour(time);
-            for (String each : perMap.keySet()){
+        for (int i = 0; i < 12; i++) {
+            Map<String, Object> perMap = searchByHour(time);
+            for (String each : perMap.keySet()) {
                 /*if (result.containsKey(each)){
                     Map<String, Object> per = new HashMap<>();
                     result.put(each,(Long) result.get(each) + (Long) perMap.get(each));
@@ -219,11 +225,11 @@ public class DataServer {
                     result.put(each,perMap.get(each));
                 }*/
                 Map<String, Object> per = new HashMap<>();
-                if (result.containsKey(each)){
-                    result.get(each).put(String.valueOf(i),perMap.get(each));
-                }else {
-                    per.put(String.valueOf(i),perMap.get(each));
-                    result.put(each,per);
+                if (result.containsKey(each)) {
+                    result.get(each).put(String.valueOf(i), perMap.get(each));
+                } else {
+                    per.put(String.valueOf(i), perMap.get(each));
+                    result.put(each, per);
                 }
             }
             time = getLaterTime(time);
@@ -234,16 +240,17 @@ public class DataServer {
 
     /**
      * 子类路口聚合
+     *
      * @param roadNum
-     * @return Map<String,Object>
+     * @return Map<String   ,   Object>
      * @throws IOException
      */
-    public static Map<String,Object> aggsCarType(String roadNum) throws IOException {
-        Map<String,Object> result = new HashMap<>();
+    public static Map<String, Object> aggsCarType(String roadNum) throws IOException {
+        Map<String, Object> result = new HashMap<>();
         Config config = new Config();
         EsUtils esUtils = new EsUtils();
         RestHighLevelClient client = esUtils.getConnection();
-        QueryBuilder queryBuilder = QueryBuilders.termQuery("roadNum",roadNum);
+        QueryBuilder queryBuilder = QueryBuilders.termQuery("roadNum", roadNum);
         TermsAggregationBuilder aggregationBuilder = AggregationBuilders.terms("per_count").field("carType").size(100);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().size(0);
         searchSourceBuilder.query(queryBuilder).aggregation(aggregationBuilder);
@@ -259,21 +266,22 @@ public class DataServer {
         ParsedStringTerms parsedStringTerms = searchResponse.getAggregations().get("per_count");
         List<? extends Terms.Bucket> buckets = parsedStringTerms.getBuckets();
         for (Terms.Bucket bucket : buckets) {
-            result.put(config.carType.get(bucket.getKey().toString()),bucket.getDocCount());
+            result.put(config.carType.get(bucket.getKey().toString()), bucket.getDocCount());
         }
         return result;
     }
 
     /**
      * 聚合每个路口某天每两个小时的车辆数
+     *
      * @param strdate
-     * @return Map<String,Object>
+     * @return Map<String   ,   Object>
      * @throws ParseException
      * @throws IOException
      */
-    public static Map<String,Object> searchByHour(String strdate) throws ParseException, IOException {
+    public static Map<String, Object> searchByHour(String strdate) throws ParseException, IOException {
         String later = getLaterTime(strdate);
-        Map<String,Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
         EsUtils esUtils = new EsUtils();
         RestHighLevelClient client = esUtils.getConnection();
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
@@ -294,7 +302,7 @@ public class DataServer {
         ParsedStringTerms parsedStringTerms = searchResponse.getAggregations().get("per_count");
         List<? extends Terms.Bucket> buckets = parsedStringTerms.getBuckets();
         for (Terms.Bucket bucket : buckets) {
-            result.put(bucket.getKey().toString(),bucket.getDocCount());
+            result.put(bucket.getKey().toString(), bucket.getDocCount());
         }
 
         return result;
@@ -302,6 +310,7 @@ public class DataServer {
 
     /**
      * 延时2小时
+     *
      * @param strdate
      * @return String
      * @throws ParseException
@@ -311,29 +320,130 @@ public class DataServer {
         Date date = simpleDateFormat.parse(strdate);
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
-        calendar.add(calendar.HOUR,2);
-        date=calendar.getTime();
+        calendar.add(calendar.HOUR, 2);
+        date = calendar.getTime();
         String later = simpleDateFormat.format(date);
         return later;
     }
 
     /**
-     * 新增首页显示三辆车最新日期的轨迹，轨迹一天之内不变
+     * 新增首页显示所有监控点的坐标
+     *
      * @param roadMapper
-     * @return Map<String,Object>
+     * @return Map<String   ,   Object>
      * @throws IOException
      */
 
-    public static Map<String,Object> place(RoadMapper roadMapper) throws IOException {
-        Map<String,Object> result = new HashMap<>();
+    public static Map<String, Object> place(RoadMapper roadMapper) throws IOException {
+        Map<String, Object> result = new HashMap<>();
+        Map<String,Object> roadMap = history();
+        Config config = new Config();
+        for (String each : roadMap.keySet()){
+            RoadMySQL roadMySQL = roadMapper.getRoadByRoadNum(each);
+            Map<String, String> xy = new HashMap<>();
+            String lng = roadMySQL.getLng();
+            String lat = roadMySQL.getLat();
+            xy.put("lng", lng);
+            xy.put("lat", lat);
+            xy.put("roadTxt",config.roadNum.get(each));
+            result.put(each,xy);
+        }
+        return result;
+    }
+
+    /**
+     * 格式化路口输出为文字
+     *
+     * @param roadNumMap
+     * @return
+     */
+    public static Map<String, Object> formatRoadNum(Map<String, Object> roadNumMap) {
+        Map<String, Object> result = new HashMap<>();
+        Config config = new Config();
+        for (String each : roadNumMap.keySet()) {
+            if (config.roadNum.containsKey(each)) {
+                result.put(config.roadNum.get(each), roadNumMap.get(each));
+            } else {
+                result.put(each, roadNumMap.get(each));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 车辆知识图谱，返回搜索车碰撞的20条车记录
+     *
+     * @param value
+     * @return
+     * @throws IOException
+     */
+    public static Set<String> carMeet(String value) throws IOException {
+        Set<String> set = new HashSet<>();
         EsUtils esUtils = new EsUtils();
         RestHighLevelClient client = esUtils.getConnection();
-        QueryBuilder queryBuilder = QueryBuilders.termQuery("day","2019-07-30T00:00:00");
+        QueryBuilder queryBuilderA = QueryBuilders.termQuery("carA", value);
+        SearchSourceBuilder searchSourceBuilderA = new SearchSourceBuilder();
+        searchSourceBuilderA.query(queryBuilderA).size(100);
+        SearchResponse searchResponseA = null;
+        SearchResponse searchResponseB = null;
+        SearchRequest searchRequestA = new SearchRequest(Config.FOLLOW_INDEX1);
+        searchRequestA.source(searchSourceBuilderA);
+
+        QueryBuilder queryBuilderB = QueryBuilders.termQuery("carB", value);
+        SearchSourceBuilder searchSourceBuilderB = new SearchSourceBuilder();
+        searchSourceBuilderB.query(queryBuilderB).size(100);
+        SearchRequest searchRequestB = new SearchRequest(Config.FOLLOW_INDEX1);
+        searchRequestB.source(searchSourceBuilderB);
+        try {
+            searchResponseA = client.search(searchRequestA, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        SearchHit[] searchHitsA = searchResponseA.getHits().getHits();
+        for (SearchHit searchHit : searchHitsA) {
+            Map<String, Object> hitMap = searchHit.getSourceAsMap();
+            set.add(hitMap.get("carB").toString());
+            if (set.size() >= 20) {
+                client.close();
+                return set;
+            }
+        }
+
+        try {
+            searchResponseB = client.search(searchRequestB, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        client.close();
+        SearchHit[] searchHitsB = searchResponseB.getHits().getHits();
+        for (SearchHit searchHit : searchHitsB) {
+            Map<String, Object> hitMap = searchHit.getSourceAsMap();
+            set.add(hitMap.get("carA").toString());
+            if (set.size() >= 20) {
+                return set;
+            }
+        }
+
+        return set;
+    }
+
+    /**
+     * 路口知识图谱
+     *
+     * @param value
+     * @return
+     * @throws IOException
+     */
+    public static Set<String> roadMeet(String value) throws IOException {
+        Set<String> set = new HashSet<>();
+        EsUtils esUtils = new EsUtils();
+        RestHighLevelClient client = esUtils.getConnection();
+        QueryBuilder queryBuilder = QueryBuilders.matchQuery("roadText", value);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(queryBuilder).size(3);
-        SearchResponse searchResponse = null;
-        SearchRequest searchRequest = new SearchRequest(Config.CAR_INDEX1);
+        searchSourceBuilder.query(queryBuilder).size(20);
+        SearchRequest searchRequest = new SearchRequest(Config.TDWY_INDEX);
         searchRequest.source(searchSourceBuilder);
+        SearchResponse searchResponse = null;
         try {
             searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
@@ -341,39 +451,15 @@ public class DataServer {
         }
         client.close();
         SearchHit[] searchHits = searchResponse.getHits().getHits();
-        Map<String,List<String>> carMap = new HashMap<>();
-        for (SearchHit searchHit : searchHits){
-            Map<String,Object> hitMap = searchHit.getSourceAsMap();
-            Map map = new HashMap();
-            List<String> list = new ArrayList<>();
-            try {
-                map = strToMap(hitMap.get("roadList").toString());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            for (Object key:map.keySet()){
-                list.add(map.get(key).toString());
-            }
-            carMap.put(hitMap.get("carNum").toString(),list);
+        for (SearchHit searchHit : searchHits) {
+            Map<String, Object> hitMap = searchHit.getSourceAsMap();
+            set.add(hitMap.get("carNum").toString());
         }
-        for (String each:carMap.keySet()){
-            Map<String,Map<String,String>> placeMap = new HashMap<>();
-            for(String roadNum:carMap.get(each)){
-                RoadMySQL roadMySQL = roadMapper.getRoadByRoadNum(roadNum);
-                Map<String,String> xy = new HashMap<>();
-                String lng = roadMySQL.getLng();
-                String lat = roadMySQL.getLat();
-                xy.put("lng",lng);
-                xy.put("lat",lat);
-                placeMap.put(roadNum,xy);
-            }
-            result.put(each,placeMap);
-        }
-        return result;
+        return set;
     }
 
     public static void main(String[] args) throws IOException, ParseException {
-        night();
+        System.out.println(history());
     }
 }
 

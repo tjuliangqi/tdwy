@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.util.Map;
 
+import static cn.tju.tdwy.service.DataServer.formatRoadNum;
+
 @RestController
 
 @RequestMapping("/road")
@@ -31,6 +33,7 @@ public class RoadController {
         try {
             if (type.equals("4")){
                 result = DataServer.history();
+                result = formatRoadNum(result);
             }else if (type.equals("3")){
                 result = roadService.getRoadByFilter("1", value, ifPrepara, preparaString, roadMapper, page);
             }else {

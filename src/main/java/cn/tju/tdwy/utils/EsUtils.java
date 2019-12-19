@@ -3,7 +3,9 @@ package cn.tju.tdwy.utils;
 
 import cn.tju.tdwy.Config;
 import org.apache.http.HttpHost;
+import org.apache.http.client.config.RequestConfig;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 
 
@@ -25,3 +27,5 @@ public class EsUtils {
     }
 
 }
+
+

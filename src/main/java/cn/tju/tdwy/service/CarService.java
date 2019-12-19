@@ -44,7 +44,7 @@ public class CarService {
         Map<String, Integer> sizeMap = new HashMap<>();
         sizeMap.put("false0",30);
         sizeMap.put("false1",30);
-        sizeMap.put("false2",1);
+        sizeMap.put("false2",30);
         sizeMap.put("false3",100);
         sizeMap.put("false4",30);
         sizeMap.put("false5",30);

@@ -18,6 +18,7 @@ public class Config {
     public static final String NIGHT_OUT_INDEX = "tdwy_night_out";
     public static final String CITY_IN_OUT_INDEX = "city_in_out";
     public static final String FOLLOW_INDEX = "tdwy_follow";
+    public static final String FOLLOW_INDEX1 = "tdwy_follow1";
     public static int PORT = 9200;
     public static final String TDWYINDEX = "tdwy";
     public Map<String,String> carType = new HashMap<>();

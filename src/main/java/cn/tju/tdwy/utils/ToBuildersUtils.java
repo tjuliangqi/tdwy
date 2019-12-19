@@ -17,7 +17,7 @@ public class ToBuildersUtils {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         QueryBuilder builder0;
         QueryBuilder builderAdd;
-
+        System.out.println(preparaString);
         // {0:车牌检索, 1:推荐, 2:图片检索, 3:自然语言检索, 4:首次入城车辆, 5:昼伏夜出车辆, 6:伴随车辆, 7:碰撞分析}
         if (ifPrepara == false || preparaString.equals("{}")) {
             if (type.equals("0")) {
