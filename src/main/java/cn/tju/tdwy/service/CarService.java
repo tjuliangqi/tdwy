@@ -36,7 +36,7 @@ public class CarService {
      * @throws IOException
      * @throws JSONException
      */
-    public static Object carSearchList(String type, String value, boolean ifPrepara, String preparaString, RoadMapper roadMapper) throws IOException, JSONException {
+    public static Object carSearchList(String type, String value, boolean ifPrepara, String preparaString, boolean ifDetail, RoadMapper roadMapper) throws IOException, JSONException {
         List<String> typeList1 = Arrays.asList("0", "2");
         List<String> typeList2 = Arrays.asList("1", "4", "5");
         List<String> typeList3 = Arrays.asList("3");
@@ -98,8 +98,8 @@ public class CarService {
                     carBean.setCarNumColor(carNumColor);
                     carBean.setCarColor(carColor);
                     carBean.setCarType(carType);
-                    List fields_bind_time_add2 = (List) sortByAccesstime(fields_bind_time_add).get("fields_bind_time");
-                    String picURL = (String) sortByAccesstime(fields_bind_time_add).get("picURL");
+                    List fields_bind_time_add2 = (List) sortByAccesstime(fields_bind_time_add, ifDetail).get("fields_bind_time");
+                    String picURL = (String) sortByAccesstime(fields_bind_time_add, ifDetail).get("picURL");
                     carBean.setPicURL(picURL);
                     carBean.setFields_bind_time(fields_bind_time_add2);
                     //carBeans.add(carBean);
@@ -138,8 +138,8 @@ public class CarService {
                     carBean.setCarNumColor(carNumColor);
                     carBean.setCarColor(carColor);
                     carBean.setCarType(carType);
-                    List fields_bind_time_new = (List) sortByAccesstime(fields_bind_time).get("fields_bind_time");
-                    String picURL = (String) sortByAccesstime(fields_bind_time).get("picURL");
+                    List fields_bind_time_new = (List) sortByAccesstime(fields_bind_time, ifDetail).get("fields_bind_time");
+                    String picURL = (String) sortByAccesstime(fields_bind_time, ifDetail).get("picURL");
                     carBean.setPicURL(picURL);
                     carBean.setFields_bind_time(fields_bind_time_new);
                     carBeans.add(carBean);
@@ -204,8 +204,8 @@ public class CarService {
                 carBean.setCarNumColor(carNumColorText);
                 carBean.setCarColor(carColorText);
                 carBean.setCarType(carTypeText);
-                List fields_bind_time_new = (List) sortByAccesstime(fields_bind_time).get("fields_bind_time");
-                String picURL = (String) sortByAccesstime(fields_bind_time).get("picURL");
+                List fields_bind_time_new = (List) sortByAccesstime(fields_bind_time, ifDetail).get("fields_bind_time");
+                String picURL = (String) sortByAccesstime(fields_bind_time, ifDetail).get("picURL");
                 carBean.setPicURL(picURL);
                 carBean.setFields_bind_time(fields_bind_time_new);
                 carBeans.add(carBean);
@@ -245,14 +245,14 @@ public class CarService {
 
                     // carAList carBList 封装成json返回
                     Map carAJson = strToMap(carAList);
-                    ArrayList carA_fields_bind_time = followAddFields(carA, carAJson, roadMapper);
-                    List carA_fields_bind_time_sort = (List) sortByAccesstime(carA_fields_bind_time).get("fields_bind_time");
-                    String carA_picURL = (String) sortByAccesstime(carA_fields_bind_time).get("picURL");
+                    ArrayList carA_fields_bind_time = followAddFields(carA, carAJson, roadMapper, ifDetail);
+                    List carA_fields_bind_time_sort = (List) sortByAccesstime(carA_fields_bind_time, ifDetail).get("fields_bind_time");
+                    String carA_picURL = (String) sortByAccesstime(carA_fields_bind_time, ifDetail).get("picURL");
 
                     Map carBJson = strToMap(carBList);
-                    ArrayList carB_fields_bind_time = followAddFields(carB, carBJson, roadMapper);
-                    List carB_fields_bind_time_sort = (List) sortByAccesstime(carB_fields_bind_time).get("fields_bind_time");
-                    String carB_picURL = (String) sortByAccesstime(carB_fields_bind_time).get("picURL");
+                    ArrayList carB_fields_bind_time = followAddFields(carB, carBJson, roadMapper, ifDetail);
+                    List carB_fields_bind_time_sort = (List) sortByAccesstime(carB_fields_bind_time, ifDetail).get("fields_bind_time");
+                    String carB_picURL = (String) sortByAccesstime(carB_fields_bind_time, ifDetail).get("picURL");
 
                     carFollowBean.setDay(day);
                     carFollowBean.setCarA(carA);

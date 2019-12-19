@@ -1,5 +1,6 @@
 package cn.tju.tdwy.utils;
 
+import ch.qos.logback.core.joran.conditional.ElseAction;
 import cn.tju.tdwy.Config;
 import cn.tju.tdwy.dao.RoadMapper;
 import cn.tju.tdwy.daomain.RoadMySQL;
@@ -87,7 +88,7 @@ public class StringToJsonUtils {
         return jsonObject;
     }
 
-    public static ArrayList<Map<String,String>> followAddFields(String carNum, Map map, RoadMapper roadMapper) throws IOException {
+    public static ArrayList<Map<String,String>> followAddFields(String carNum, Map map, RoadMapper roadMapper, boolean ifDetail) throws IOException {
         EsUtils esUtils = new EsUtils();
         RestHighLevelClient client = esUtils.client;
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -113,7 +114,8 @@ public class StringToJsonUtils {
                 picURL = "http://211.81.50.158"+picURL.replace(ip+"/data",config.ipMap.get(ip));
                 picUrlList.add(picURL);
             }
-            picURL = httpURLConectionGET(picUrlList);
+            if (ifDetail)
+                picURL = httpURLConectionGET(picUrlList);
         }
         Set<String> keys = map.keySet();
         ArrayList<Map<String,String>> fields_bind_time = new ArrayList();
@@ -142,7 +144,7 @@ public class StringToJsonUtils {
 //        }
 //    }
 
-    public static Map sortByAccesstime(ArrayList<Map<String, String>> list) {
+    public static Map sortByAccesstime(ArrayList<Map<String, String>> list, boolean ifDetail) {
 
         //实现Collections接口进行排序
         Collections.sort(list, new Comparator<Map<String, String>>() {
@@ -162,7 +164,9 @@ public class StringToJsonUtils {
             daySet.add(day);
             picUrlList.add(map.get("picURL"));
         }
-        String getPicURL = httpURLConectionGET(picUrlList);
+        String getPicURL = "ifDetail_false.jpg";
+        if (ifDetail)
+            getPicURL = httpURLConectionGET(picUrlList);
         List newList0 = new ArrayList();
         for (String eachDay : daySet){
             Map newMap = new LinkedHashMap<>();

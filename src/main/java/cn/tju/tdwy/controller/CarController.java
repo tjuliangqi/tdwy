@@ -32,8 +32,9 @@ public class CarController {
         String value = String.valueOf(map.get("value"));
         Boolean ifPrepara = Boolean.valueOf(map.get("ifPrepara"));
         String preparaString = String.valueOf(map.get("preparaString"));
+        Boolean ifDetail = Boolean.valueOf(map.get("ifDetail"));
 
-        Object carBeans_FollowBeans = carSearchList(type, value, ifPrepara, preparaString, roadMapper);
+        Object carBeans_FollowBeans = carSearchList(type, value, ifPrepara, preparaString, ifDetail, roadMapper);
         return RetResponse.makeOKRsp(carBeans_FollowBeans);
     }
 
