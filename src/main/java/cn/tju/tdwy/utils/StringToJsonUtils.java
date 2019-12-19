@@ -138,7 +138,7 @@ public class StringToJsonUtils {
 //        }
 //    }
 
-    public static ArrayList<Map<String, String>> sortByAccesstime(ArrayList<Map<String, String>> list) {
+    public static Map<String, List> sortByAccesstime(ArrayList<Map<String, String>> list) {
 
         //实现Collections接口进行排序
         Collections.sort(list, new Comparator<Map<String, String>>() {
@@ -148,6 +148,26 @@ public class StringToJsonUtils {
             }
         });
 
-        return list;
+        //return list;
+
+
+        Set<String> daySet = new HashSet<>();
+        for (Map<String ,String> map : list){
+            String day = map.get("accessTime").split("T")[0];
+            daySet.add(day);
+        }
+        Map<String, List> newMap = new HashMap<>();
+        for (String eachDay : daySet){
+            List newList = new ArrayList();
+            for (Map<String ,String> map : list){
+                if (eachDay.equals(map.get("accessTime").split("T")[0])){
+                    newList.add(map);
+                }
+            }
+            if (newList.size() > 2)
+                newList = Arrays.asList(newList.get(0), newList.get(newList.size()-1));
+            newMap.put(eachDay, newList);
+        }
+        return newMap;
     }
 }

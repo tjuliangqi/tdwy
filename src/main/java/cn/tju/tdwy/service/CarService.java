@@ -43,20 +43,20 @@ public class CarService {
         List<String> typeList4 = Arrays.asList("6", "7");
         Map<String, Integer> sizeMap = new HashMap<>();
         sizeMap.put("false0",1);
-        sizeMap.put("false1",10);
+        sizeMap.put("false1",30);
         sizeMap.put("false2",1);
         sizeMap.put("false3",100);
-        sizeMap.put("false4",10);
-        sizeMap.put("false5",10);
-        sizeMap.put("false6",10);
+        sizeMap.put("false4",30);
+        sizeMap.put("false5",30);
+        sizeMap.put("false6",30);
         sizeMap.put("false7",1);
         sizeMap.put("true0",32);
-        sizeMap.put("true1",10);
+        sizeMap.put("true1",30);
         sizeMap.put("true2",32);
         sizeMap.put("true3",100);
-        sizeMap.put("true4",10);
-        sizeMap.put("true5",10);
-        sizeMap.put("true6",10);
+        sizeMap.put("true4",30);
+        sizeMap.put("true5",30);
+        sizeMap.put("true6",30);
         sizeMap.put("true7",1);
         Map<String,Object> resultMap = new HashMap<>();
         Object result = new Object();
@@ -98,7 +98,7 @@ public class CarService {
                     carBean.setCarNumColor(carNumColor);
                     carBean.setCarColor(carColor);
                     carBean.setCarType(carType);
-                    ArrayList<Map<String,String>> fields_bind_time_add2 = sortByAccesstime(fields_bind_time_add);
+                    Map<String, List> fields_bind_time_add2 = sortByAccesstime(fields_bind_time_add);
                     carBean.setFields_bind_time(fields_bind_time_add2);
                     //carBeans.add(carBean);
                 }
@@ -238,10 +238,10 @@ public class CarService {
                     // carAList carBList 封装成json返回
                     Map carAJson = strToMap(carAList);
                     ArrayList carA_fields_bind_time = followAddFields(carA, carAJson, roadMapper);
-                    ArrayList carA_fields_bind_time_sort = sortByAccesstime(carA_fields_bind_time);
+                    Map<String, List> carA_fields_bind_time_sort = sortByAccesstime(carA_fields_bind_time);
                     Map carBJson = strToMap(carBList);
                     ArrayList carB_fields_bind_time = followAddFields(carB, carBJson, roadMapper);
-                    ArrayList carB_fields_bind_time_sort = sortByAccesstime(carB_fields_bind_time);
+                    Map<String, List> carB_fields_bind_time_sort = sortByAccesstime(carB_fields_bind_time);
                     carFollowBean.setDay(day);
                     carFollowBean.setCarA(carA);
                     carFollowBean.setCarB(carB);

@@ -1,6 +1,5 @@
 package cn.tju.tdwy.daomain;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public class CarBean {
@@ -10,7 +9,7 @@ public class CarBean {
     private String carNumColor;
     private String carColor;
     private String carType;
-    private ArrayList fields_bind_time;
+    private Map fields_bind_time;
 
 
     public String getCarNum() {
@@ -53,11 +52,11 @@ public class CarBean {
         this.carType = carType;
     }
 
-    public ArrayList getFields_bind_time() {
+    public Map getFields_bind_time() {
         return fields_bind_time;
     }
 
-    public void setFields_bind_time(ArrayList fields_bind_time) {
+    public void setFields_bind_time(Map fields_bind_time) {
         this.fields_bind_time = fields_bind_time;
     }
 
