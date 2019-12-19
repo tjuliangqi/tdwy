@@ -41,14 +41,14 @@ public class ToBuildersUtils {
                         .query(builder0)
                         .sort("day",SortOrder.DESC);
             } else if (type.equals("3")) {
-                //value = "津JHT808在2019年6月30号4点30分到2019年6月30号4点30分的行车记录";
-                Map map = textToMap(value);
+                String beginTime = value.split(",")[1];
+                String endTime = value.split(",")[2];
                 System.out.println("自然语言先用模板处理代替");
                 builder0 = QueryBuilders.boolQuery()
-                        .must(QueryBuilders.matchQuery("carNum", map.get("carNum")))
+                        .must(QueryBuilders.matchQuery("carNum", value.split(",")[0]))
                         .must(QueryBuilders.rangeQuery("accessTime")
-                                .from(map.get("beginTime"))
-                                .to(map.get("endTime")));
+                                .from(beginTime)
+                                .to(endTime));
                 searchSourceBuilder.from(0)
                         .size(sizeMap.get("false3"))
                         .sort("accessTime",SortOrder.ASC)
@@ -73,7 +73,7 @@ public class ToBuildersUtils {
                 searchSourceBuilder.from(0)
                         .size(sizeMap.get("false6"))
                         .query(builder0);
-            } else {
+            } else if (type.equals("7")) {
                 // value = "['黑RJT353', '鲁A75020']";
                 //System.out.println(value);
                 String[] carArray = value.replace("[\"","").replace("\"]","").split("\",\"");
@@ -95,6 +95,32 @@ public class ToBuildersUtils {
                                 .must(QueryBuilders.matchQuery("carB",carAName)));
                 searchSourceBuilder.from(0)
                         .size(sizeMap.get("false7"))
+                        .query(builder0);
+            } else if(type.equals("nlp4")){
+                builder0 = QueryBuilders.boolQuery()
+                        .must(QueryBuilders.matchQuery("carNum",value))
+                        .must(QueryBuilders.rangeQuery("countIn")
+                                .from(1));
+                searchSourceBuilder.from(0)
+                        .size(sizeMap.get("false4"))
+                        .query(builder0);
+            } else if(type.equals("nlp5")){
+                builder0 = QueryBuilders.boolQuery()
+                        .must(QueryBuilders.matchQuery("carNum",value))
+                        .must(QueryBuilders.rangeQuery("nightTimeNum")
+                                .from(1));
+                searchSourceBuilder.from(0)
+                        .size(sizeMap.get("false5"))
+                        .query(builder0);
+            } else if(type.equals("nlp6")){
+                builder0 = QueryBuilders.boolQuery()
+                        .must(QueryBuilders.boolQuery()
+                                .should(QueryBuilders.matchQuery("carA",value))
+                                .should(QueryBuilders.matchQuery("carB",value)))
+                        .must(QueryBuilders.rangeQuery("count")
+                                .from(3));
+                searchSourceBuilder.from(0)
+                        .size(sizeMap.get("false6"))
                         .query(builder0);
             }
         } else { // 只筛选0、1、2、4、5 其中0、2只筛选时间 // {0:车牌检索, 1:推荐, 2:图片检索, 3:自然语言检索, 4:首次入城车辆, 5:昼伏夜出车辆, 6:伴随车辆, 7:碰撞分析}
@@ -229,7 +255,7 @@ public class ToBuildersUtils {
                     .must(builder0)
                     .must(builder1);
         }catch (Exception e){
-            System.out.println("No filtration carType");
+            System.out.println("No filtration day");
         }
 
         return builder0;
