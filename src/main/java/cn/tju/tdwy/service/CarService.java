@@ -42,7 +42,7 @@ public class CarService {
         List<String> typeList3 = Arrays.asList("3");
         List<String> typeList4 = Arrays.asList("6", "7");
         Map<String, Integer> sizeMap = new HashMap<>();
-        sizeMap.put("false0",1);
+        sizeMap.put("false0",30);
         sizeMap.put("false1",30);
         sizeMap.put("false2",1);
         sizeMap.put("false3",100);
@@ -98,7 +98,9 @@ public class CarService {
                     carBean.setCarNumColor(carNumColor);
                     carBean.setCarColor(carColor);
                     carBean.setCarType(carType);
-                    Map<String, List> fields_bind_time_add2 = sortByAccesstime(fields_bind_time_add);
+                    List fields_bind_time_add2 = (List) sortByAccesstime(fields_bind_time_add).get("fields_bind_time");
+                    String picURL = (String) sortByAccesstime(fields_bind_time_add).get("picURL");
+                    carBean.setPicURL(picURL);
                     carBean.setFields_bind_time(fields_bind_time_add2);
                     //carBeans.add(carBean);
                 }
@@ -136,7 +138,10 @@ public class CarService {
                     carBean.setCarNumColor(carNumColor);
                     carBean.setCarColor(carColor);
                     carBean.setCarType(carType);
-                    carBean.setFields_bind_time(sortByAccesstime(fields_bind_time));
+                    List fields_bind_time_new = (List) sortByAccesstime(fields_bind_time).get("fields_bind_time");
+                    String picURL = (String) sortByAccesstime(fields_bind_time).get("picURL");
+                    carBean.setPicURL(picURL);
+                    carBean.setFields_bind_time(fields_bind_time_new);
                     carBeans.add(carBean);
                 }
 
@@ -199,7 +204,10 @@ public class CarService {
                 carBean.setCarNumColor(carNumColorText);
                 carBean.setCarColor(carColorText);
                 carBean.setCarType(carTypeText);
-                carBean.setFields_bind_time(sortByAccesstime(fields_bind_time));
+                List fields_bind_time_new = (List) sortByAccesstime(fields_bind_time).get("fields_bind_time");
+                String picURL = (String) sortByAccesstime(fields_bind_time).get("picURL");
+                carBean.setPicURL(picURL);
+                carBean.setFields_bind_time(fields_bind_time_new);
                 carBeans.add(carBean);
                 resultMap.put("result", carBeans);
             }
@@ -238,10 +246,14 @@ public class CarService {
                     // carAList carBList 封装成json返回
                     Map carAJson = strToMap(carAList);
                     ArrayList carA_fields_bind_time = followAddFields(carA, carAJson, roadMapper);
-                    Map<String, List> carA_fields_bind_time_sort = sortByAccesstime(carA_fields_bind_time);
+                    List carA_fields_bind_time_sort = (List) sortByAccesstime(carA_fields_bind_time).get("fields_bind_time");
+                    String carA_picURL = (String) sortByAccesstime(carA_fields_bind_time).get("picURL");
+
                     Map carBJson = strToMap(carBList);
                     ArrayList carB_fields_bind_time = followAddFields(carB, carBJson, roadMapper);
-                    Map<String, List> carB_fields_bind_time_sort = sortByAccesstime(carB_fields_bind_time);
+                    List carB_fields_bind_time_sort = (List) sortByAccesstime(carB_fields_bind_time).get("fields_bind_time");
+                    String carB_picURL = (String) sortByAccesstime(carB_fields_bind_time).get("picURL");
+
                     carFollowBean.setDay(day);
                     carFollowBean.setCarA(carA);
                     carFollowBean.setCarB(carB);
@@ -253,6 +265,8 @@ public class CarService {
                     carFollowBean.setCarBColor(carBColor);
                     carFollowBean.setCarAType(carAType);
                     carFollowBean.setCarBType(carBType);
+                    carFollowBean.setCarAPicUrl(carA_picURL);
+                    carFollowBean.setCarBPicUrl(carB_picURL);
                     carFollowBean.setCarAList(carA_fields_bind_time_sort);
                     carFollowBean.setCarBList(carB_fields_bind_time_sort);
                     carFollowBean.setCount(count);

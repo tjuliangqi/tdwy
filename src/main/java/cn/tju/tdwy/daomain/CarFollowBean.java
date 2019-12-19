@@ -1,8 +1,26 @@
 package cn.tju.tdwy.daomain;
 
+import java.util.List;
 import java.util.Map;
 
 public class CarFollowBean {
+
+    private String day;
+    private String carA;
+    private String carB;
+    private String carANumType;
+    private String carBNumType;
+    private String carANumColor;
+    private String carBNumColor;
+    private String carAColor;
+    private String carBColor;
+    private String carAType;
+    private String carBType;
+    private String carAPicUrl;
+    private String carBPicUrl;
+    private List carAList;
+    private List carBList;
+    private int count;
 
     public String getDay() {
         return day;
@@ -92,19 +110,35 @@ public class CarFollowBean {
         this.carBType = carBType;
     }
 
-    public Map getCarAList() {
+    public String getCarAPicUrl() {
+        return carAPicUrl;
+    }
+
+    public void setCarAPicUrl(String carAPicUrl) {
+        this.carAPicUrl = carAPicUrl;
+    }
+
+    public String getCarBPicUrl() {
+        return carBPicUrl;
+    }
+
+    public void setCarBPicUrl(String carBPicUrl) {
+        this.carBPicUrl = carBPicUrl;
+    }
+
+    public List getCarAList() {
         return carAList;
     }
 
-    public void setCarAList(Map carAList) {
+    public void setCarAList(List carAList) {
         this.carAList = carAList;
     }
 
-    public Map getCarBList() {
+    public List getCarBList() {
         return carBList;
     }
 
-    public void setCarBList(Map carBList) {
+    public void setCarBList(List carBList) {
         this.carBList = carBList;
     }
 
@@ -130,26 +164,13 @@ public class CarFollowBean {
                 ", carBColor='" + carBColor + '\'' +
                 ", carAType='" + carAType + '\'' +
                 ", carBType='" + carBType + '\'' +
+                ", carAPicUrl='" + carAPicUrl + '\'' +
+                ", carBPicUrl='" + carBPicUrl + '\'' +
                 ", carAList=" + carAList +
                 ", carBList=" + carBList +
                 ", count=" + count +
                 '}';
     }
-
-    private String day;
-    private String carA;
-    private String carB;
-    private String carANumType;
-    private String carBNumType;
-    private String carANumColor;
-    private String carBNumColor;
-    private String carAColor;
-    private String carBColor;
-    private String carAType;
-    private String carBType;
-    private Map carAList;
-    private Map carBList;
-    private int count;
 
 
 }

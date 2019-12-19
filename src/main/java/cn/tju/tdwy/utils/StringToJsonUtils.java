@@ -17,6 +17,8 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.*;
 
+import static cn.tju.tdwy.utils.PicUrlUtils.httpURLConectionGET;
+
 public class StringToJsonUtils {
 
     /**
@@ -91,7 +93,7 @@ public class StringToJsonUtils {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         QueryBuilder builder0 = QueryBuilders.matchQuery("carNum", carNum);
         searchSourceBuilder.from(0)
-                .size(1)
+                .size(30)
                 .query(builder0);
         SearchRequest searchRequest = new SearchRequest(Config.TDWY_INDEX);
         searchRequest.source(searchSourceBuilder);
@@ -101,6 +103,7 @@ public class StringToJsonUtils {
         if (searchHits.length < 1){
             System.out.println("查询不到此车");
         }else {
+            List<String> picUrlList = new ArrayList<>();
             for (SearchHit searchHit:searchHits){
                 //System.out.println(searchHit.getSourceAsString());
                 picURL = (String)searchHit.getSourceAsMap().get("picName1");
@@ -108,8 +111,9 @@ public class StringToJsonUtils {
                 String ip = picURL.split("/")[1];
                 Config config = new Config();
                 picURL = "http://211.81.50.158"+picURL.replace(ip+"/data",config.ipMap.get(ip));
+                picUrlList.add(picURL);
             }
-
+            picURL = httpURLConectionGET(picUrlList);
         }
         Set<String> keys = map.keySet();
         ArrayList<Map<String,String>> fields_bind_time = new ArrayList();
@@ -138,7 +142,7 @@ public class StringToJsonUtils {
 //        }
 //    }
 
-    public static Map<String, List> sortByAccesstime(ArrayList<Map<String, String>> list) {
+    public static Map sortByAccesstime(ArrayList<Map<String, String>> list) {
 
         //实现Collections接口进行排序
         Collections.sort(list, new Comparator<Map<String, String>>() {
@@ -151,23 +155,35 @@ public class StringToJsonUtils {
         //return list;
 
 
-        Set<String> daySet = new HashSet<>();
+        Set<String> daySet = new LinkedHashSet<>();
+        List<String> picUrlList = new ArrayList<>();
         for (Map<String ,String> map : list){
             String day = map.get("accessTime").split("T")[0];
             daySet.add(day);
+            picUrlList.add(map.get("picURL"));
         }
-        Map<String, List> newMap = new HashMap<>();
+        String getPicURL = httpURLConectionGET(picUrlList);
+        List newList0 = new ArrayList();
         for (String eachDay : daySet){
-            List newList = new ArrayList();
+            Map newMap = new LinkedHashMap<>();
+            List<Map> newList = new ArrayList();
             for (Map<String ,String> map : list){
                 if (eachDay.equals(map.get("accessTime").split("T")[0])){
                     newList.add(map);
                 }
             }
-            if (newList.size() > 2)
-                newList = Arrays.asList(newList.get(0), newList.get(newList.size()-1));
-            newMap.put(eachDay, newList);
+
+            newList = Arrays.asList(newList.get(0), newList.get(newList.size()-1));
+            Map startMap = newList.get(0);
+            Map endMap = newList.get(newList.size()-1);
+            newMap.put("day", eachDay);
+            newMap.put("start", startMap);
+            newMap.put("end", endMap);
+            newList0.add(newMap);
         }
-        return newMap;
+        Map twoFields = new HashMap();
+        twoFields.put("picURL", getPicURL);
+        twoFields.put("fields_bind_time", newList0);
+        return twoFields;
     }
 }
