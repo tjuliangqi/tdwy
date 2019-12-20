@@ -38,9 +38,9 @@ public class CarService {
      */
     public static Object carSearchList(String type, String value, boolean ifPrepara, String preparaString, boolean ifDetail, RoadMapper roadMapper) throws IOException, JSONException {
         List<String> typeList1 = Arrays.asList("0", "2");
-        List<String> typeList2 = Arrays.asList("1", "4", "5");
+        List<String> typeList2 = Arrays.asList("1", "4", "5", "nlp4", "nlp5");
         List<String> typeList3 = Arrays.asList("3");
-        List<String> typeList4 = Arrays.asList("6", "7");
+        List<String> typeList4 = Arrays.asList("6", "7", "nlp6");
         Map<String, Integer> sizeMap = new HashMap<>();
         sizeMap.put("false0",30);
         sizeMap.put("false1",30);
@@ -58,6 +58,8 @@ public class CarService {
         sizeMap.put("true5",30);
         sizeMap.put("true6",30);
         sizeMap.put("true7",1);
+        sizeMap.put("nlp4",1);
+        sizeMap.put("nlp5",1);
         Map<String,Object> resultMap = new HashMap<>();
         Object result = new Object();
         EsUtils esUtils = new EsUtils();
@@ -213,7 +215,7 @@ public class CarService {
             }
             result = carBeans;
         } else {
-            SearchRequest searchRequest = new SearchRequest(Config.FOLLOW_INDEX);
+            SearchRequest searchRequest = new SearchRequest(Config.FOLLOW_INDEX1);
             searchRequest.source(searchSourceBuilder);
             SearchResponse searchResponse = client.search(searchRequest);
             SearchHit[] searchHits = searchResponse.getHits().getHits();

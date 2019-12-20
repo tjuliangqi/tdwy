@@ -61,8 +61,8 @@ public class NLPUtils {
             map.put("nlpType","nlp2");
             map.put("carBeans",carBeans);
         }//首次入城车辆
-        else if (text.contains("首次入城车辆")){
-            Pattern pattern = Pattern.compile("(.*?)是否是首次入城车辆");
+        else if (text.contains("首次入城")){
+            Pattern pattern = Pattern.compile("(.*?)是否是首次入城(.*?)");
             Matcher matcher = pattern.matcher(text);
             matcher.find();
             try {
@@ -76,7 +76,7 @@ public class NLPUtils {
             map.put("carBeans",carBeans);
         }
         else if (text.contains("昼伏夜出")){
-            Pattern pattern = Pattern.compile("(.*?)是否是昼伏夜出");
+            Pattern pattern = Pattern.compile("(.*?)是否是昼伏夜出(.*?)");
             Matcher matcher = pattern.matcher(text);
             matcher.find();
             try {
@@ -89,6 +89,7 @@ public class NLPUtils {
             map.put("carBeans",carBeans);
         }
         else if (text.contains("伴随车辆")){
+            System.out.println(text);
             Pattern pattern = Pattern.compile("(.*?)是否有伴随车辆");
             Matcher matcher = pattern.matcher(text);
             matcher.find();

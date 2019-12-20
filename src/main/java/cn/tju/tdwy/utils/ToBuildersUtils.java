@@ -76,7 +76,8 @@ public class ToBuildersUtils {
             } else if (type.equals("7")) {
                 // value = "['黑RJT353', '鲁A75020']";
                 //System.out.println(value);
-                String[] carArray = value.replace("[\"","").replace("\"]","").split("\",\"");
+                String[] carArray = value.replace("[","").replace("]","").replace("\"","")
+                        .replace("'","").replace(" ","").split(",");
                 List<String> carList= Arrays.asList(carArray);
                 String carAName = "";
                 String carBName = "";
@@ -88,11 +89,11 @@ public class ToBuildersUtils {
                 }
                 builder0 = QueryBuilders.boolQuery()
                         .should(QueryBuilders.boolQuery()
-                                .must(QueryBuilders.matchQuery("carA",carAName))
-                                .must(QueryBuilders.matchQuery("carB",carBName)))
+                                .must(QueryBuilders.termQuery("carA",carAName))
+                                .must(QueryBuilders.termQuery("carB",carBName)))
                         .should(QueryBuilders.boolQuery()
-                                .must(QueryBuilders.matchQuery("carA",carBName))
-                                .must(QueryBuilders.matchQuery("carB",carAName)));
+                                .must(QueryBuilders.termQuery("carA",carBName))
+                                .must(QueryBuilders.termQuery("carB",carAName)));
                 searchSourceBuilder.from(0)
                         .size(sizeMap.get("false7"))
                         .query(builder0);
@@ -102,23 +103,29 @@ public class ToBuildersUtils {
                         .must(QueryBuilders.rangeQuery("countIn")
                                 .from(1));
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("false4"))
-                        .query(builder0);
+                        .size(sizeMap.get("nlp4"))
+                        .query(builder0)
+                        .sort("day", SortOrder.DESC);
+                System.out.println(builder0);
             } else if(type.equals("nlp5")){
                 builder0 = QueryBuilders.boolQuery()
                         .must(QueryBuilders.matchQuery("carNum",value))
                         .must(QueryBuilders.rangeQuery("nightTimeNum")
                                 .from(1));
                 searchSourceBuilder.from(0)
-                        .size(sizeMap.get("false5"))
-                        .query(builder0);
+                        .size(sizeMap.get("nlp5"))
+                        .query(builder0)
+                        .sort("day", SortOrder.DESC);
             } else if(type.equals("nlp6")){
                 builder0 = QueryBuilders.boolQuery()
-                        .must(QueryBuilders.boolQuery()
-                                .should(QueryBuilders.matchQuery("carA",value))
-                                .should(QueryBuilders.matchQuery("carB",value)))
-                        .must(QueryBuilders.rangeQuery("count")
-                                .from(3));
+                        .should(QueryBuilders.boolQuery()
+                                .must(QueryBuilders.termQuery("carA",value))
+                                .must(QueryBuilders.rangeQuery("count")
+                                .from(3)))
+                        .should(QueryBuilders.boolQuery()
+                                .must(QueryBuilders.termQuery("carB",value))
+                                .must(QueryBuilders.rangeQuery("count")
+                                        .from(3)));
                 searchSourceBuilder.from(0)
                         .size(sizeMap.get("false6"))
                         .query(builder0);
