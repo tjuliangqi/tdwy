@@ -2,8 +2,7 @@ package cn.tju.tdwy.utils;
 
 import cn.tju.tdwy.dao.RoadMapper;
 import org.json.JSONException;
-
-import javax.sound.midi.Soundbank;
+import cn.tju.tdwy.service.roadService;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -22,6 +21,7 @@ public class NLPUtils {
         String carNum = "津JHT808";
         String beginTime = "2019-06-30";
         String endTime = "2019-07-30";
+        String roadNum = "";
 
         if (text.contains("行车记录") && text.length()<14){
             Pattern pattern = Pattern.compile("(.*?)的行车记录");
@@ -34,7 +34,7 @@ public class NLPUtils {
             }
 
             Object carBeans = carSearchList("0", carNum, false, "", true, roadMapper);
-            map.put("nlpType","nlp1");
+            map.put("nlpType","nlp2");
             map.put("carBeans",carBeans);
         }
         else if (text.contains("行车记录") && text.contains("在")){
@@ -100,6 +100,23 @@ public class NLPUtils {
             Object carBeans = carSearchList("nlp6", carNum, false, "", false, roadMapper);
             map.put("nlpType","nlp6");
             map.put("carBeans",carBeans);
+        }
+        else if (text.contains("过车记录")){
+            Pattern pattern = Pattern.compile("(.*?)的过车记录");
+            Matcher matcher = pattern.matcher(text);
+            matcher.find();
+            try {
+                roadNum = matcher.group(1);
+            } catch (Exception e) {
+                System.out.println("nlp无法获取roadNum，使用默认津JHT808");
+            }
+            Object roadBeans = roadService.getRoadByFilter("1", roadNum, false, "", roadMapper, 1);
+            map.put("nlpType","nlp7");
+            map.put("carBeans",roadBeans);
+        }
+        else {
+            map.put("nlpType","nlp-1");
+            map.put("carBeans",null);
         }
 
         return map;
