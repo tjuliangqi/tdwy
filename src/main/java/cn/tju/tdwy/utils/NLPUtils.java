@@ -1,6 +1,7 @@
 package cn.tju.tdwy.utils;
 
 import cn.tju.tdwy.dao.RoadMapper;
+import cn.tju.tdwy.daomain.CarBean;
 import org.json.JSONException;
 import cn.tju.tdwy.service.roadService;
 import java.io.IOException;
@@ -18,7 +19,7 @@ public class NLPUtils {
      */
     public static Map textToMap (String text, RoadMapper roadMapper) throws IOException, JSONException {
         Map map = new HashMap();
-        String carNum = "津JHT808";
+        String carNum = "津N88888";
         String beginTime = "2019-06-30";
         String endTime = "2019-07-30";
         String roadNum = "";
@@ -28,9 +29,9 @@ public class NLPUtils {
             Matcher matcher = pattern.matcher(text);
             matcher.find();
             try {
-                carNum = matcher.group(1);
+                carNum = matcher.group(1).toUpperCase();
             } catch (Exception e) {
-                System.out.println("nlp无法获取carNum，使用默认津JHT808");
+                System.out.println("nlp无法获取carNum，使用默认津N88888");
             }
 
             Object carBeans = carSearchList("0", carNum, false, "", true, roadMapper);
@@ -42,9 +43,9 @@ public class NLPUtils {
             Matcher matcher = pattern.matcher(text);
             matcher.find();
             try {
-                carNum = matcher.group(1);
+                carNum = matcher.group(1).toUpperCase();
             } catch (Exception e){
-                System.out.println("nlp无法获取carNum，使用默认津JHT808");
+                System.out.println("nlp无法获取carNum，使用默认津N88888");
             }
             try {
                 beginTime = matcher.group(2);
@@ -66,9 +67,9 @@ public class NLPUtils {
             Matcher matcher = pattern.matcher(text);
             matcher.find();
             try {
-                carNum = matcher.group(1);
+                carNum = matcher.group(1).toUpperCase();
             } catch (Exception e) {
-                System.out.println("nlp无法获取carNum，使用默认津JHT808");
+                System.out.println("nlp无法获取carNum，使用默认津N88888");
             }
 
             Object carBeans = carSearchList("nlp4", carNum, false, "", false, roadMapper);
@@ -80,9 +81,9 @@ public class NLPUtils {
             Matcher matcher = pattern.matcher(text);
             matcher.find();
             try {
-                carNum = matcher.group(1);
+                carNum = matcher.group(1).toUpperCase();
             } catch (Exception e) {
-                System.out.println("nlp无法获取carNum，使用默认津JHT808");
+                System.out.println("nlp无法获取carNum，使用默认津N88888");
             }
             Object carBeans = carSearchList("nlp5", carNum, false, "", false, roadMapper);
             map.put("nlpType","nlp5");
@@ -94,9 +95,9 @@ public class NLPUtils {
             Matcher matcher = pattern.matcher(text);
             matcher.find();
             try {
-                carNum = matcher.group(1);
+                carNum = matcher.group(1).toUpperCase();
             } catch (Exception e) {
-                System.out.println("nlp无法获取carNum，使用默认津JHT808");
+                System.out.println("nlp无法获取carNum，使用默认津N88888");
             }
             Object carBeans = carSearchList("nlp6", carNum, false, "", false, roadMapper);
             map.put("nlpType","nlp6");
@@ -109,7 +110,7 @@ public class NLPUtils {
             try {
                 roadNum = matcher.group(1);
             } catch (Exception e) {
-                System.out.println("nlp无法获取roadNum，使用默认津JHT808");
+                System.out.println("nlp无法获取roadNum，使用默认津N88888");
             }
             Object roadBeans = roadService.getRoadByFilter("1", roadNum, false, "", roadMapper, 1);
             map.put("nlpType","nlp7");
@@ -117,7 +118,7 @@ public class NLPUtils {
         }
         else {
             map.put("nlpType","nlp-1");
-            map.put("carBeans",null);
+            map.put("carBeans",new CarBean());
         }
 
         return map;
