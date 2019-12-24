@@ -118,7 +118,7 @@ public class NLPUtils {
         }
         else {
             map.put("nlpType","nlp-1");
-            map.put("carBeans",new CarBean());
+            map.put("carBeans",new String[0]);
         }
 
         return map;
